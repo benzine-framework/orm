@@ -164,6 +164,22 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     }
 
     /**
+     * @param Where $where Laminas Where statement to use
+     *
+     * @return null|Models\{{ class_name }}Model
+     */
+    public function getByWhere(
+        Where $where
+    ): ?Models\{{ class_name }}Model
+    {
+        ${{ variable_name }}s = $this->getManyByWhere($where, 1);
+        if(count(${{ variable_name }}s) == 0){
+            return null;
+        }
+        return array_reset(${{ variable_name }}s);
+    }
+
+    /**
      * @param string $field Table column to filter by
      * @param mixed $value Data to filter by
      * @param null|int $limit
