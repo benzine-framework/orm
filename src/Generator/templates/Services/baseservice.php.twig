@@ -172,11 +172,12 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         Where $where
     ): ?Models\{{ class_name }}Model
     {
-        ${{ variable_name }}s = $this->getManyByWhere($where, 1);
-        if(count(${{ variable_name }}s) == 0){
+        ${{ variable_name }} = $this->getManyByWhere($where, 1);
+        if(!is_array(${{ variable_name }}) || count(${{ variable_name }}) == 0){
             return null;
         }
-        return array_reset(${{ variable_name }}s);
+
+        return reset(${{ variable_name }});
     }
 
     /**
