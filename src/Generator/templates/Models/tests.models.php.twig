@@ -309,7 +309,7 @@ class {{ class_name }}Test extends AbstractBaseTestCase
          * @var ${{ class_name|singularize|transform_studly_to_camel }} Models\{{ class_name|transform_camel_to_studly }}Model
          * @var ${{ remote_object.getLocalFunctionName|singularize|transform_studly_to_camel }}Models Models\{{ remote_object.getLocalModelName }}[]
          */
-        list(${{ class_name|singularize|transform_studly_to_camel }}, ${{ remote_object.getLocalFunctionName|singularize|transform_studly_to_camel }}Models) = $list;
+        [${{ class_name|singularize|transform_studly_to_camel }}, ${{ remote_object.getLocalFunctionName|singularize|transform_studly_to_camel }}Models] = $list;
 
         // Verify the function exists
         $this->assertTrue(method_exists(${{ class_name|singularize|transform_studly_to_camel }}, "count{{ remote_object.getLocalFunctionName|singularize }}Objects"));
