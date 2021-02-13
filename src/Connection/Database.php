@@ -2,7 +2,9 @@
 
 namespace Benzine\ORM\Connection;
 
+use Benzine\ORM\Tests\App;
 use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Metadata\Metadata;
 
 class Database
@@ -165,5 +167,25 @@ class Database
             'password' => $this->getPassword(),
             'database' => $this->getDatabase(),
         ];
+    }
+
+    public function startTransaction(): ConnectionInterface
+    {
+        return $this->getConnection()->beginTransaction();
+    }
+
+    public static function BeginTransaction(): ConnectionInterface
+    {
+        /** @var Databases $databases */
+        $databases = App::DI(Databases::class);
+        /** @var Database $database */
+        $database = $databases->getDatabase('default');
+
+        return $database->startTransaction();
+    }
+
+    private function getConnection(): ConnectionInterface
+    {
+        return $this->getAdapter()->getDriver()->getConnection();
     }
 }
