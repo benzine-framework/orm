@@ -188,9 +188,9 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
     /**
      * @param {{ column.phptype }}|null ${{ column.getFieldSanitised }}
      *
-     * @return self
+     * @return Models\{{ class_name }}Model
      */
-    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null): self
+    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null): Models\{{ class_name }}Model
     {
         $this->{{ column.getFieldSanitised }} = ${{ column.getFieldSanitised }};
 
@@ -422,7 +422,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ class_name }}Model
      */
-    public function exchangeArray(array $data): self
+    public function exchangeArray(array $data): Models\{{ class_name }}Model
     {
         $this->__pre_load();
 {% for column in columns %}
