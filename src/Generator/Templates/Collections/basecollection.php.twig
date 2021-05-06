@@ -20,9 +20,6 @@ abstract class AbstractBase{{ class_name }}Collection
 {
 
 {% for column in columns %}
-    /**
-     * @return {{ column.phptype }}[]
-     */
     public function getAll{{ column.getPropertyFunction|pluralize }}() : \Generator
     {
         foreach($this->contained as $contained){
