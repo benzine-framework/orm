@@ -19,14 +19,8 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
 {
     protected $table = '{{ table }}';
     protected string $model = Models\{{ class_name }}Model::class;
-    protected Generator $faker;
-    protected Connection\Databases $databaseConnection;
     protected Connection\Database $database;
 
-{% for related_object in related_objects_shared|sort|unique %}
-    protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway;
-
-{% endfor %}
     /**
      * AbstractTableGateway constructor.
      *
@@ -40,22 +34,18 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
      */
     public function __construct(
 {% for related_object in related_objects_shared|sort|unique %}
-        {% if related_object.getRemoteClass != class_name %}
-        TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway,
-        {% endif %}
+{% if related_object.getRemoteClass != class_name %}
+        protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway,
+{% endif %}
 {% endfor %}
-        Generator $faker,
-        Connection\Databases $databaseConnection
+        protected Generator $faker,
+        protected Connection\Databases $databaseConnection
     ) {
 {% for related_object in related_objects_shared|sort|unique %}
-{% if related_object.getRemoteClass != class_name %}
-        $this->{{ related_object.getRemoteVariable }}TableGateway = ${{ related_object.getRemoteVariable }}TableGateway;
-{% else %}
+{% if related_object.getRemoteClass == class_name %}
         $this->{{ related_object.getRemoteVariable }}TableGateway = $this;
 {% endif %}
 {% endfor %}
-        $this->faker = $faker;
-        $this->databaseConnection = $databaseConnection;
         $this->database = $this->databaseConnection->getDatabase('{{ database }}');
 
         $resultSetPrototype = new ResultSet(ResultSet::TYPE_ARRAYOBJECT, new $this->model());
