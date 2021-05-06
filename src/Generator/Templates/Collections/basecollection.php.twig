@@ -30,11 +30,6 @@ abstract class AbstractBase{{ class_name }}Collection
         }
     }
 
-    /**
-     * @param {{ column.phptype }}|null ${{ column.getFieldSanitised }}
-     *
-     * @return Collections\{{ class_name }}Collection
-     */
     public function setAll{{ column.getPropertyFunction|pluralize }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null) : self
     {
         foreach($this->contained as $contained){
