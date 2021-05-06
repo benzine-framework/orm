@@ -2,7 +2,7 @@
 
 namespace Benzine\ORM\Interfaces;
 
-interface ModelInterface
+interface ModelWritableInterface
 {
     public function __toPublicArray(): array;
 

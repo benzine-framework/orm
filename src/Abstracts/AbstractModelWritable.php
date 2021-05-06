@@ -2,11 +2,11 @@
 
 namespace Benzine\ORM\Abstracts;
 
-use Benzine\ORM\Interfaces\ModelInterface;
+use Benzine\ORM\Interfaces;
 use Camel\CaseTransformer;
 use Camel\Format;
 
-abstract class AbstractModel implements ModelInterface, \Serializable
+abstract class AbstractModelWritable implements Interfaces\ModelWritableInterface, \Serializable
 {
     protected array $_primary_keys = [];
     protected array $_autoincrement_keys = [];

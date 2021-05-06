@@ -7,14 +7,14 @@ use {{ namespace }}\TableGateways;
 use {{ namespace }}\Services;
 use DI\NotFoundException;
 use Benzine\ORM\Abstracts\AbstractModel;
-use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
+use Benzine\ORM\Interfaces;
 use Benzine\App as App;
 use Carbon\Carbon as DateTime;
 
 {% include '_overwrite_warning.twig' %}
 {% set existingMethods = [] %}
 
-abstract class AbstractBase{{ class_name }}Model extends AbstractModel implements ModelInterface
+abstract class AbstractBase{{ class_name }}Model extends AbstractModel implements Interfaces\ModelWritableInterface
 {
     // Declare what fields are available on this object
 {% for column in columns %}
@@ -345,6 +345,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endif %}
 {% endfor %}
 {% endif %}
+{% if is_savable %}
     /**
      * @throws NotFoundException
      */
@@ -355,7 +356,8 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 
         return $tableGateway->save($this);
     }
-
+{% endif %}
+{% if is_savable %}
     /**
      * Destroy the current record.
      * Returns the number of affected rows.
@@ -369,7 +371,8 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 
         return $tableGateway->delete($this->getPrimaryKeys_dbColumns());
     }
-
+{% endif %}
+{% if is_savable %}
     /**
      * Destroy the current record, and any dependencies upon it, recursively.
      * Returns the number of affected rows.
@@ -400,6 +403,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         return $this->destroy();
 {% endif %}
     }
+{% endif %}
 
     /**
      * Provides an array of all properties in this model.

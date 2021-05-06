@@ -21,6 +21,7 @@ class Model extends Entity
     protected array $relatedObjects = [];
     protected array $primaryKeys = [];
     protected $autoIncrements;
+    protected bool $isReadOnly = false;
 
     /**
      * @return self
@@ -242,6 +243,29 @@ class Model extends Entity
     }
 
     /**
+     * @return bool
+     */
+    public function isReadOnly(): bool
+    {
+        return $this->isReadOnly;
+    }
+
+    /**
+     * @param bool $isReadOnly
+     * @return Model
+     */
+    public function setIsReadOnly(bool $isReadOnly): Model
+    {
+        $this->isReadOnly = $isReadOnly;
+        return $this;
+    }
+
+    public function isSavable(): bool
+    {
+        return ! $this->isReadOnly();
+    }
+
+    /**
      * @param \Zend\Db\Metadata\Object\ColumnObject[] $columns
      *
      * @return $this
@@ -349,6 +373,7 @@ class Model extends Entity
             'controller_route' => $this->transCamel2Snake->transform(Inflect::pluralize($this->getClassName())),
             'namespace_model' => "{$this->getNamespace()}\\Models\\{$this->getClassName()}Model",
             'columns' => $this->columns,
+            'is_savable' => $this->isSavable(),
             'related_objects' => $this->getRelatedObjects(),
             'related_objects_shared' => $this->getRelatedObjectsSharedAssets(),
             'remote_objects' => $this->getRemoteObjects(),
@@ -455,10 +480,12 @@ class Model extends Entity
     public function getAutoIncrements()
     {
         $autoincrementKeys = [];
-        foreach ($this->autoIncrements as $autoincrementKey) {
-            foreach ($this->getColumns() as $column) {
-                if ($column->getDbField() == $autoincrementKey) {
-                    $autoincrementKeys[$column->getFieldSanitised()] = $column->getDbField();
+        if(is_array($this->autoIncrements) && count($this->autoIncrements) >0) {
+            foreach ($this->autoIncrements as $autoincrementKey) {
+                foreach ($this->getColumns() as $column) {
+                    if ($column->getDbField() == $autoincrementKey) {
+                        $autoincrementKeys[$column->getFieldSanitised()] = $column->getDbField();
+                    }
                 }
             }
         }

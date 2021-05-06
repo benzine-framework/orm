@@ -23,7 +23,7 @@ use Benzine\App as App;
  * this classes behaviours, do so in the class that
  * extends this, or modify the Laminator Template!
  */
-abstract class BaseUsersAbstractModel extends AbstractModel implements ModelInterface
+abstract class BaseUsersAbstractModelWritable extends AbstractModel implements ModelInterface
 {
     // Declare what fields are available on this object
     public const FIELD_USERID = 'userId';

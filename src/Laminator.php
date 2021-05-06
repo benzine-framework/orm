@@ -18,7 +18,10 @@ use DirectoryIterator;
 use Gone\Twig\InflectionExtension;
 use Gone\Twig\TransformExtension;
 use Laminas\Db\Metadata\Object\TableObject;
+use Laminas\Db\Metadata\Object\ViewObject;
 use Laminas\Stdlib\ConsoleHelper;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Symfony\Component\Filesystem\Filesystem;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError;
@@ -57,8 +60,12 @@ class Laminator
     private int $expectedFileGroup;
     private int $expectedPermissions;
 
+    private Logger $monolog;
+
     public function __construct(string $workPath, ConfigurationService $benzineConfig, Databases $databases)
     {
+        $this->monolog = new Logger('Laminator');
+        $this->monolog->pushHandler(new StreamHandler('php://stdout', Logger::DEBUG));
         $this->workPath = $workPath;
         self::$benzineConfig = $benzineConfig;
         $this->databases = $databases;
@@ -217,7 +224,7 @@ class Laminator
         if (self::$benzineConfig->has("databases/{$database->getName()}/table_options/_/replace")) {
             $replacements = self::$benzineConfig->getArray("databases/{$database->getName()}/table_options/_/replace");
             foreach ($replacements as $before => $after) {
-                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                $this->monolog->debug("  > Replacing {$before} with {$after} in {$tableName}");
                 $tableName = str_replace($before, $after, $tableName);
             }
         }
@@ -272,9 +279,8 @@ class Laminator
     public function makeLaminator()
     {
         $models = $this->makeModelSchemas();
-        echo 'Removing core generated files ... ';
         $this->removeCoreGeneratedFiles();
-        echo "[DONE]\n";
+        $this->monolog->info('Removed core generated files');
 
         $this->makeCoreFiles($models);
 
@@ -290,23 +296,34 @@ class Laminator
         $models = [];
         $keys = [];
         foreach ($this->databases->getAll() as $dbName => $database) {
-            /** @var Database $database */
-            echo "Database: {$dbName}\n";
-            /** @var TableObject $tables */
             $tables = $database->getMetadata()->getTables();
+            $views = $database->getMetadata()->getViews();
 
-            echo 'Collecting '.count($tables)." entities data.\n";
+            $this->monolog->info(sprintf("Database %s", $dbName));
 
-            foreach ($tables as $table) {
+            $this->monolog->info(sprintf(
+                "Collecting %d table entities and %d view entities data...",
+                count($tables),
+                count($views)
+            ));
+
+            foreach (array_merge($tables,$views) as $table) {
                 if (in_array($table->getName(), $this->ignoredTables, true)) {
                     continue;
                 }
+
                 $oModel = Components\Model::Factory($this)
                     ->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix", null))
                     ->setNamespace(self::$benzineConfig->getNamespace())
                     ->setDatabase($database)
                     ->setTable($table->getName())
                 ;
+
+                // If the table is a view, we treat it as read-only.
+                if($table instanceof ViewObject){
+                    $oModel->setIsReadOnly(true);
+                    \Kint::dump($table->getViewDefinition());exit;
+                }
 
                 if (self::$benzineConfig->has("databases/{$dbName}/class_prefix")) {
                     $oModel->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix"));
@@ -318,9 +335,10 @@ class Laminator
         ksort($models);
         ksort($keys);
         foreach ($this->databases->getAll() as $dbName => $database) {
-            /** @var Database $database */
             $tables = $database->getMetadata()->getTables();
-            foreach ($tables as $table) {
+            $views = $database->getMetadata()->getViews();
+
+            foreach (array_merge($tables,$views) as $table) {
                 $key = $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()];
                 $models[$key]
                     ->computeColumns($table->getColumns())
@@ -354,13 +372,20 @@ class Laminator
         }
 
         // Bit of Diag...
-        //foreach($models as $oModel){
-        //    if(count($oModel->getRemoteObjects()) > 0) {
-        //        foreach ($oModel->getRemoteObjects() as $remoteObject) {
-        //            echo " > {$oModel->getClassName()} has {$remoteObject->getLocalClass()} on {$remoteObject->getLocalBoundColumn()}:{$remoteObject->getRemoteBoundColumn()} (Function: {$remoteObject->getLocalFunctionName()})\n";
-        //        }
-        //    }
-        //}
+        foreach($models as $oModel){
+            if(count($oModel->getRemoteObjects()) > 0) {
+                foreach ($oModel->getRemoteObjects() as $remoteObject) {
+                      $this->monolog->debug(sprintf(
+                          " > %s has %s on %s:%s (Function: %s)",
+                          $oModel->getClassName(),
+                          $remoteObject->getLocalClass(),
+                          $remoteObject->getLocalBoundColumn(),
+                          $remoteObject->getRemoteBoundColumn(),
+                          $remoteObject->getLocalFunctionName()
+                      ));
+                }
+            }
+        }
 
         // Finally return some models.
         return $models;
@@ -403,12 +428,13 @@ class Laminator
      */
     private function makeCoreFiles(array $models)
     {
-        echo 'Generating Core files for '.count($models)." models... \n";
+        $this->monolog->debug(sprintf('Generating Core files for %d models...', count($models)));
         $allModelData = [];
         foreach ($models as $model) {
             $allModelData[$model->getClassName()] = $model->getRenderDataset();
+
             // "Model" suite
-            echo " > {$model->getClassName()}\n";
+            $this->monolog->debug(sprintf(" > %s", $model->getClassName()));
 
             //\Kint::dump($model->getRenderDataset());
             if (in_array('Models', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
