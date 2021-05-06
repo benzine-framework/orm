@@ -190,7 +190,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      *
      * @return Models\{{ class_name }}Model
      */
-    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null): Models\{{ class_name }}Model
+    public function set{{ column.getPropertyFunction }}({{ column.phptype }} ${{ column.getFieldSanitised }} = null): self
     {
         $this->{{ column.getFieldSanitised }} = ${{ column.getFieldSanitised }};
 
@@ -429,19 +429,16 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         ${{ column.getDbField() }} = $data['{{ column.getDbFieldOptions|join("'] ?? $data['")|raw }}'] ?? null;
 {% endfor %}
 
-        $this
 {% for column in columns %}
 {% if column.getDbType == 'timestamp' %}
-            ->set{{ column.getPropertyFunction }}(
+        $this->{{ column.getFieldSanitised }} =
                 ${{ column.getDbField() }} !== null
                     ? DateTime::createFromFormat("Y-m-d H:i:s", ${{ column.getDbField() }})
-                    : null
-            )
+                    : null ;
 {% else %}
-            ->set{{ column.getPropertyFunction }}(${{ column.getDbField() }})
+        $this->{{ column.getFieldSanitised }} = ${{ column.getDbField() }};
 {% endif %}
 {% endfor %}
-        ;
 
         $this->__post_load();
 

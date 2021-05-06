@@ -91,7 +91,7 @@ class Laminator
             $this->setWorkPath(self::$benzineConfig->get(ConfigurationService::KEY_APP_ROOT));
         }
 
-        $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/templates');
+        $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/Templates');
         $this->twig = new \Twig\Environment($this->loader, ['debug' => true]);
         $this->twig->addExtension(new \Twig\Extension\DebugExtension());
         $this->twig->addExtension(new TransformExtension());
@@ -417,7 +417,10 @@ class Laminator
                 $this->renderToFile(true, "tests/Models/Generated/{$model->getClassName()}Test.php", 'Models/tests.models.php.twig', $model->getRenderDataset());
                 $this->renderToFile(true, "src/TableGateways/Base/AbstractBase{$model->getClassName()}TableGateway.php", 'Models/basetable.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/TableGateways/{$model->getClassName()}TableGateway.php", 'Models/table.php.twig', $model->getRenderDataset());
+                $this->renderToFile(true, "src/Collections/Base/AbstractBase{$model->getClassName()}Collection.php", 'Collections/basecollection.php.twig', $model->getRenderDataset());
+                $this->renderToFile(false, "src/Collections/{$model->getClassName()}Collection.php", 'Collections/collection.php.twig', $model->getRenderDataset());
             }
+
 
             // "Service" suite
             if (in_array('Services', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
@@ -435,11 +438,6 @@ class Laminator
             // "Endpoint" test suite
             if (in_array('Endpoints', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "tests/Api/Generated/{$model->getClassName()}EndpointTest.php", 'ApiEndpoints/tests.endpoints.php.twig', $model->getRenderDataset());
-            }
-
-            // "Routes" suite
-            if (in_array('Routes', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
-                $this->renderToFile(true, "src/Routes/Generated/{$model->getClassName()}Route.php", 'Router/route.php.twig', $model->getRenderDataset());
             }
         }
 

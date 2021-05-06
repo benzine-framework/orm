@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM\Abstracts;
 
+use Benzine\ORM\Interfaces\CollectionsInterface;
 use Benzine\ORM\TabularData;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql;
@@ -15,13 +16,15 @@ abstract class AbstractService
 
     abstract public function getTermSingular(): string;
 
-    abstract public function getNewTableGatewayInstance(): AbstractTableGateway;
+    abstract protected function getNewTableGatewayInstance(): AbstractTableGateway;
+
+    abstract protected function getNewCollectionInstance(): AbstractCollection;
 
     /**
      * @param null|array|\Closure[]      $wheres
      * @param null|Sql\Expression|string $order
      *
-     * @return AbstractModel[]
+     * @return CollectionsInterface
      */
     public function getAll(
         int $limit = null,
@@ -29,7 +32,7 @@ abstract class AbstractService
         array $wheres = null,
         $order = null,
         string $orderDirection = null
-    ) {
+    ) : CollectionsInterface {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         [$matches, $count] = $tableGateway->fetchAll(
@@ -39,27 +42,26 @@ abstract class AbstractService
             $order,
             null !== $orderDirection ? $orderDirection : Sql\Select::ORDER_ASCENDING
         );
-        $return = [];
+
+        $collection = $this->getNewCollectionInstance();
 
         if ($matches instanceof ResultSet) {
-            foreach ($matches as $match) {
-                $return[] = $match;
-            }
+            $collection->fromResultSet($matches);
         }
 
-        return $return;
+        return $collection;
     }
 
     /**
      * @param null|string           $distinctColumn
      * @param null|array|\Closure[] $wheres
      *
-     * @return AbstractModel[]
+     * @return AbstractCollection
      */
     public function getDistinct(
         string $distinctColumn,
         array $wheres = null
-    ) {
+    ) : AbstractCollection {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         [$matches, $count] = $tableGateway->fetchDistinct(
@@ -67,24 +69,23 @@ abstract class AbstractService
             $wheres
         );
 
-        $return = [];
+        $collection = $this->getNewCollectionInstance();
+
         if ($matches instanceof ResultSet) {
-            foreach ($matches as $match) {
-                $return[] = $match;
-            }
+            $collection->fromResultSet($matches);
         }
 
-        return $return;
+        return $collection;
     }
 
     /**
      * @param null|array|\Closure[] $wheres
      *
-     * @return int
+     * @return integer
      */
     public function countAll(
         array $wheres = null
-    ) {
+    ) : integer {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
 
@@ -121,7 +122,7 @@ abstract class AbstractService
 
     abstract public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?AbstractModel;
 
-    abstract public function getManyByField(string $field, $value, int $limit = null, int $offset = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?array;
+    abstract public function getManyByField(string $field, $value, int $limit = null, int $offset = null, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): AbstractCollection;
 
     abstract public function countByField(string $field, $value): int;
 

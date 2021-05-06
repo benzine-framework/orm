@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "ext-simplexml": "*",
         "gone.io/twig-extension-inflection": "^1.0",
         "gone.io/twig-extension-transform": "^1.0",

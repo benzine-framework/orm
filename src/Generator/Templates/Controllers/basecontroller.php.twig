@@ -1,0 +1,22 @@
+<?php
+
+namespace {{ namespace }}\Controllers\Base;
+
+use {{ namespace }}\Services;
+use Benzine\Controllers\AbstractCrudController;
+
+{% include '_overwrite_warning.twig' %}
+
+abstract class AbstractBase{{ class_name }}Controller extends AbstractCrudController
+{
+    public const RESPONSIBLE_MODEL = '{{ class_name }}';
+
+    public function __construct(
+        protected Services\{{ class_name }}Service $service
+    ) {}
+
+    public function getService() : Services\{{ class_name }}Service
+    {
+        return $this->service;
+    }
+}

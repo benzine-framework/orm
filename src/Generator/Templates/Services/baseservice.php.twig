@@ -2,6 +2,7 @@
 
 namespace {{ namespace }}\Services\Base;
 
+use {{ namespace }}\Collections;
 use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Laminas\Db\Sql\Expression;
@@ -15,67 +16,29 @@ use Benzine\ORM\Interfaces\ServiceInterface as ServiceInterface;
 
 abstract class AbstractBase{{ class_name }}Service extends AbstractService implements ServiceInterface
 {
-    // Related Objects Table Gateways
-{% for related_object in related_objects_shared|sort|unique %}
-{% if related_object.getRemoteClass != class_name %}
-    protected TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway;
-{% endif %}
-{% endfor %}
-
-    // Remote Constraints Table Gateways
-{% for remote_constraint in remote_constraints %}
-{% if remote_contraint.getRemoteClass != class_name %}
-    protected TableGateways\{{ remote_constraint.getLocalClass }}TableGateway ${{ remote_constraint.getLocalVariable }}TableGateway;
-{% endif %}
-{% endfor %}
-
-    // Self Table Gateway
-    protected TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway;
-
-    /**
-     * Constructor.
-     *
-{% for related_object in related_objects_shared|sort|unique %}
-{% if related_object.getRemoteClass != class_name %}
-     * @param TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway
-{% endif %}
-{% endfor %}
-{% for remote_constraint in remote_constraints %}
-{% if remote_contraint.getRemoteClass != class_name %}
-     * @param TableGateways\{{ remote_constraint.getLocalClass }}TableGateway ${{ remote_constraint.getLocalVariable }}TableGateway
-{% endif %}
-{% endfor %}
-     * @param TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway
-     */
     public function __construct(
 {% for related_object in related_objects_shared|sort|unique %}
 {% if related_object.getRemoteClass != class_name %}
-        TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway,
+        private TableGateways\{{ related_object.getRemoteClass }}TableGateway ${{ related_object.getRemoteVariable }}TableGateway,
 {% endif %}
 {% endfor %}
 {% for remote_constraint in remote_constraints %}
 {% if remote_contraint.getRemoteClass != class_name %}
-        TableGateways\{{ remote_constraint.getLocalClass }}TableGateway ${{ remote_constraint.getLocalVariable }}TableGateway,
+        private TableGateways\{{ remote_constraint.getLocalClass }}TableGateway ${{ remote_constraint.getLocalVariable }}TableGateway,
 {% endif %}
 {% endfor %}
-        TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway
-    ) {
-{% for related_object in related_objects_shared|sort|unique %}
-{% if related_object.getRemoteClass != class_name %}
-        $this->{{ related_object.getRemoteVariable }}TableGateway = ${{ related_object.getRemoteVariable }}TableGateway;
-{% endif %}
-{% endfor %}
-{% for remote_constraint in remote_constraints %}
-{% if remote_contraint.getRemoteClass != class_name %}
-    $this->{{ remote_constraint.getLocalVariable }}TableGateway = ${{ remote_constraint.getLocalVariable }}TableGateway;
-{% endif %}
-{% endfor %}
-        $this->{{ variable_name }}TableGateway = ${{ variable_name }}TableGateway;
-    }
+        private TableGateways\{{ class_name }}TableGateway ${{ variable_name }}TableGateway,
+        private Collections\{{ class_name }}Collection ${{ variable_name }}Collection
+    ) {}
 
-    public function getNewTableGatewayInstance(): TableGateways\{{ class_name }}TableGateway
+    protected function getNewTableGatewayInstance(): TableGateways\{{ class_name }}TableGateway
     {
         return $this->{{ variable_name }}TableGateway;
+    }
+
+    protected function getNewCollectionInstance(): Collections\{{ class_name }}Collection
+    {
+        return $this->{{ variable_name }}Collection;
     }
 
     public function getNewModelInstance($dataExchange = []): Models\{{ class_name }}Model
@@ -90,7 +53,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|Expression|string $order
      * @param null|string            $orderDirection
      *
-     * @return Models\{{ class_name }}Model[]
+     * @return Collections\{{ class_name }}Collection
      */
     public function getAll(
         int $limit = null,
@@ -98,7 +61,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         array $wheres = null,
         $order = null,
         string $orderDirection = null
-    ) {
+    ) : Collections\{{ class_name }}Collection {
         return parent::getAll(
             $limit,
             $offset,
@@ -148,7 +111,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|string $orderBy Field to sort by
      * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return null|Models\{{ class_name }}Model[]
+     * @return Collections\{{ class_name }}Collection
      */
     public function getManyByWhere(
         Where $where,
@@ -156,8 +119,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         int $offset = null,
         $orderBy = null,
         $orderDirection = Select::ORDER_ASCENDING
-    ): ?array
-    {
+    ): Collections\{{ class_name }}Collection {
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyByWhere($where, $limit, $offset, $orderBy, $orderDirection);
@@ -188,7 +150,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|string $orderBy Field to sort by
      * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return null|Models\{{ class_name }}Model[]
+     * @return Collections\{{ class_name }}Collection
      */
     public function getManyByField(
         string $field,
@@ -197,8 +159,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         int $offset = null,
         $orderBy = null,
         $orderDirection = Select::ORDER_ASCENDING
-    ): ?array
-    {
+    ) : Collections\{{ class_name }}Collection {
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyByField($field, $value, $limit, $offset, $orderBy, $orderDirection);
@@ -259,10 +220,14 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      * @param int $limit Limit the number of matches returned
      *
-     * @return Models\{{ class_name }}Model[]
+     * @return Collections\{{ class_name }}Collection
      */
-    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null): ?array
-    {
+    public function getManyMatching(
+        $keyValue = [],
+        $orderBy = null,
+        $orderDirection = Select::ORDER_ASCENDING,
+        int $limit = null
+    ) : Collections\{{ class_name }}Collection {
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyMatching($keyValue, $orderBy, $orderDirection, $limit);
@@ -323,7 +288,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     /**
      * Get a version of this object pre-populated with nonsense.
      *
-     * @returns Models\{{ class_name }}Model
+     * @return Models\{{ class_name }}Model
      */
     public function getMockObject(): Models\{{ class_name }}Model
     {
