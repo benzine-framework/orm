@@ -4,7 +4,7 @@ namespace Benzine\ORM\Components;
 
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Laminator;
-use Gone\Inflection\Inflect;
+use MatthewBaggett\Inflection\Inflect;
 
 class RelatedModel extends Entity
 {

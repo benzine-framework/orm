@@ -3,7 +3,7 @@
 namespace Benzine\ORM\Profiler;
 
 use Benzine\ORM\Interfaces\QueryStatisticInterface;
-use Gone\UUID\UUID;
+use MatthewBaggett\UUID\UUID;
 use Laminas\Db\Adapter\ParameterContainer;
 use Laminas\Db\Adapter\Profiler\ProfilerInterface;
 use Monolog\Logger;
@@ -14,12 +14,9 @@ class Profiler implements ProfilerInterface
     private ?string $sql;
     private array $queries = [];
     private array $queryTimes = [];
-    private Logger $logger;
 
-    public function __construct(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
+    public function __construct(private Logger $logger)
+    {}
 
     public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null): array
     {

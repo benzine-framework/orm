@@ -5,7 +5,7 @@ namespace Benzine\ORM\Components;
 use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Laminator;
-use Gone\Inflection\Inflect;
+use MatthewBaggett\Inflection\Inflect;
 use Laminas\Db\Metadata\Object\ColumnObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
 

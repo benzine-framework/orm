@@ -6,12 +6,9 @@ use Benzine\ORM\Interfaces\QueryStatisticInterface;
 
 class QueryStatistic implements QueryStatisticInterface
 {
-    /** @var string */
-    private $sql;
-    /** @var float */
-    private $time;
-    /** @var array */
-    private $callPoints;
+    private string $sql;
+    private float $time;
+    private array $callPoints;
 
     public function __toArray(): array
     {
