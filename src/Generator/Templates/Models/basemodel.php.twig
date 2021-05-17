@@ -70,12 +70,15 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 
 {% endfor %}
 
+
 {% for related_object in related_objects %}
+    // Related Object Services\{{ related_object.getRemoteClass }}Service
     private Services\{{ related_object.getRemoteClass }}Service ${{ related_object.getRemoteVariable }}Service;
 {% endfor %}
 {% for remote_object in remote_objects %}
 {% if remote_object.getLocalClass != class_name %}
 {% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
+    // Remote Object Services\{{ remote_object.getLocalClass }}Service
     private Services\{{ remote_object.getLocalClass }}Service ${{ remote_object.getLocalVariable }}Service;
 {% endif %}
 {% endif %}

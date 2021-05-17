@@ -12,11 +12,11 @@ use Benzine\ORM\Connection\Databases;
 use Benzine\ORM\Exception\SchemaToAdaptorException;
 use Benzine\Services\ConfigurationService;
 use Benzine\Twig\Extensions\ArrayUniqueTwigExtension;
+use Benzine\Twig\Extensions\InflectionExtension;
+use Benzine\Twig\Extensions\TransformExtension;
 use Camel\CaseTransformer;
 use Camel\Format;
 use DirectoryIterator;
-use Benzine\Twig\Extensions\InflectionExtension;
-use Benzine\Twig\Extensions\TransformExtension;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Stdlib\ConsoleHelper;
 use Symfony\Component\Filesystem\Filesystem;
@@ -420,7 +420,6 @@ class Laminator
                 $this->renderToFile(true, "src/Collections/Base/AbstractBase{$model->getClassName()}Collection.php", 'Collections/basecollection.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Collections/{$model->getClassName()}Collection.php", 'Collections/collection.php.twig', $model->getRenderDataset());
             }
-
 
             // "Service" suite
             if (in_array('Services', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {

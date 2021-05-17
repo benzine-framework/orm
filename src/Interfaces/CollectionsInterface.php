@@ -6,5 +6,5 @@ use Laminas\Db\ResultSet\ResultSet;
 
 interface CollectionsInterface
 {
-    public function fromResultSet(ResultSet $resultSet) : CollectionsInterface;
+    public function fromResultSet(ResultSet $resultSet): CollectionsInterface;
 }

@@ -16,10 +16,6 @@ abstract class AbstractService
 
     abstract public function getTermSingular(): string;
 
-    abstract protected function getNewTableGatewayInstance(): AbstractTableGateway;
-
-    abstract protected function getNewCollectionInstance(): AbstractCollection;
-
     /**
      * @param null|array|\Closure[]      $wheres
      * @param null|Sql\Expression|string $order
@@ -32,7 +28,7 @@ abstract class AbstractService
         array $wheres = null,
         $order = null,
         string $orderDirection = null
-    ) : CollectionsInterface {
+    ): CollectionsInterface {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         [$matches, $count] = $tableGateway->fetchAll(
@@ -61,7 +57,7 @@ abstract class AbstractService
     public function getDistinct(
         string $distinctColumn,
         array $wheres = null
-    ) : AbstractCollection {
+    ): AbstractCollection {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
         [$matches, $count] = $tableGateway->fetchDistinct(
@@ -81,11 +77,11 @@ abstract class AbstractService
     /**
      * @param null|array|\Closure[] $wheres
      *
-     * @return integer
+     * @return int
      */
     public function countAll(
         array $wheres = null
-    ) : integer {
+    ): int {
         /** @var AbstractTableGateway $tableGateway */
         $tableGateway = $this->getNewTableGatewayInstance();
 
@@ -127,4 +123,8 @@ abstract class AbstractService
     abstract public function countByField(string $field, $value): int;
 
     abstract public function getRandom(): ?AbstractModel;
+
+    abstract protected function getNewTableGatewayInstance(): AbstractTableGateway;
+
+    abstract protected function getNewCollectionInstance(): AbstractCollection;
 }

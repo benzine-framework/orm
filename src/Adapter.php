@@ -2,11 +2,11 @@
 
 namespace Benzine\ORM;
 
+use Benzine\ORM\Profiler\Profiler as BenzineProfiler;
+use Laminas\Db\Adapter\Adapter as LaminasAdapter;
 use Laminas\Db\Adapter\Platform;
 use Laminas\Db\Adapter\Profiler;
 use Laminas\Db\ResultSet;
-use Laminas\Db\Adapter\Adapter as LaminasAdapter;
-use Benzine\ORM\Profiler\Profiler as BenzineProfiler;
 
 class Adapter extends LaminasAdapter
 {

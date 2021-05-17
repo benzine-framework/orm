@@ -632,19 +632,7 @@ abstract class AbstractTableGateway extends TableGateway
             $select->offset($offset);
         }
 
-        $resultSet = $this->selectWith($select);
-
-        $results = [];
-        if (0 == $resultSet->count()) {
-            return null;
-        }
-        for ($i = 0; $i < $resultSet->count(); ++$i) {
-            $row = $resultSet->current();
-            $results[] = $row;
-            $resultSet->next();
-        }
-
-        return $results;
+        return $this->selectWith($select);
     }
 
     /**
@@ -652,6 +640,7 @@ abstract class AbstractTableGateway extends TableGateway
      * @param null|int    $offset  int
      * @param null|string $orderBy string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
+     * @param mixed $value
      *
      * @return null|array|\ArrayObject
      */

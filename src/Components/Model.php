@@ -5,9 +5,9 @@ namespace Benzine\ORM\Components;
 use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Connection\Database;
 use Benzine\ORM\Laminator;
-use MatthewBaggett\Inflection\Inflect;
 use Laminas\Db\Metadata\Object\ColumnObject;
 use Laminas\Db\Metadata\Object\ConstraintObject;
+use MatthewBaggett\Inflection\Inflect;
 
 class Model extends Entity
 {
@@ -377,7 +377,13 @@ class Model extends Entity
      */
     public function getRelatedObjects(): array
     {
-        return $this->relatedObjects;
+        $relatedObjects = [];
+        foreach ($this->relatedObjects as $relatedObject) {
+            // @var $relatedObject RelatedModel
+            $relatedObjects[$relatedObject->getRemoteClass()] = $relatedObject;
+        }
+
+        return array_values($relatedObjects);
     }
 
     public function setRelatedObjects(array $relatedObjects): self
@@ -409,12 +415,12 @@ class Model extends Entity
         foreach ($this->getColumns() as $column) {
             if (count($column->getRemoteObjects()) > 0) {
                 foreach ($column->getRemoteObjects() as $remoteObject) {
-                    $remoteObjects[] = $remoteObject;
+                    $remoteObjects[$remoteObject->getLocalClass()] = $remoteObject;
                 }
             }
         }
 
-        return $remoteObjects;
+        return array_values($remoteObjects);
     }
 
     public function getPrimaryKeys(): array

@@ -2,10 +2,12 @@
 
 namespace {{ namespace }}\TableGateways\Base;
 
+use {{ namespace }}\Collections;
 use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\Sql\Where;
 use Benzine\ORM\Abstracts\AbstractModel;
 use Benzine\ORM\Abstracts\AbstractTableGateway;
 use Benzine\ORM\Connection;
@@ -137,5 +139,20 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
     public function fetchRandom() : ?Models\{{ class_name }}Model
     {
         return parent::fetchRandom();
+    }
+
+    /**
+     * @return Collections\{{ class_name }}Collection
+     */
+    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING) : Collections\{{ class_name }}Collection
+    {
+        return (new Collections\{{ class_name }}Collection())
+            ->fromResultSet(parent::getManyByWhere(
+                $where,
+                $limit,
+                $offset,
+                $orderBy,
+                $orderDirection
+            ));
     }
 }
