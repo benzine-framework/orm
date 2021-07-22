@@ -340,6 +340,7 @@ class Model extends Entity
             'database' => $this->getDatabase()->getName(),
             'table' => $this->getTable(),
             'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
+            'app_core' => $this->getLaminator()->getBenzineConfig()->getCore(),
             //'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
             'class_name' => $this->getClassName(),
             'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
