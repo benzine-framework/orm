@@ -7,7 +7,7 @@ use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\Models\BlogPostsModel;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\BlogPostsTableGateway;
-use Gone\UUID\UUID;
+use MatthewBaggett\UUID\UUID;
 use Benzine\Tests\AbstractBaseTestCase;
 
 /**

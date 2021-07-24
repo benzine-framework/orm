@@ -7,7 +7,7 @@ use Benzine\ORM\Tests\Models;
 use Benzine\ORM\Tests\Models\MigrationsModel;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\MigrationsTableGateway;
-use Gone\UUID\UUID;
+use MatthewBaggett\UUID\UUID;
 use Benzine\Tests\AbstractBaseTestCase;
 
 /**

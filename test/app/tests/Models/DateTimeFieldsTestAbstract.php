@@ -10,7 +10,7 @@ use Benzine\ORM\Tests\Services\UsersService;
 use Benzine\ORM\Tests\TableGateways;
 use Benzine\ORM\Tests\TableGateways\UsersTableGateway;
 use Carbon\Carbon;
-use Gone\UUID\UUID;
+use MatthewBaggett\UUID\UUID;
 use Benzine\Tests\AbstractBaseTestCase;
 
 class DateTimeFieldsTestAbstract extends AbstractBaseTestCase
