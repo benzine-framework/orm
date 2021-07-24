@@ -87,7 +87,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 
     // Caching entities
 {% for related_object in related_objects %}
-    protected ?Models\{{ related_object.getRemoteClass }}Model $cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object;
+    protected ?Models\{{ related_object.getRemoteClass }}Model $cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object = null;
 {% endfor %}
 {% for remote_object in remote_objects %}
 {% if remote_object.getLocalClass != class_name %}
@@ -230,7 +230,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-        if (!$this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object instanceof Collections\{{ remote_object.getLocalClass }}Collection){
+        if (!$this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object instanceof Collections\{{ related_object.getRemoteClass }}Collection){
             $this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()
                     ->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
         }
