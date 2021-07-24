@@ -6,6 +6,10 @@ abstract class AbstractCollection
 {
     protected array $contained = [];
 
+    public function __toArray() : array {
+        return $this->contained;
+    }
+
     public function getIterator()
     {
         return new \ArrayIterator($this->contained);
