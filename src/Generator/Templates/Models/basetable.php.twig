@@ -7,6 +7,7 @@ use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 use Benzine\ORM\Abstracts\AbstractModel;
 use Benzine\ORM\Abstracts\AbstractTableGateway;
@@ -141,10 +142,14 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
         return parent::fetchRandom();
     }
 
-    /**
-     * @return Collections\{{ class_name }}Collection
-     */
-    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING) : Collections\{{ class_name }}Collection
+    public function getManyByWhere(
+        Where $where,
+        int $limit = null,
+        int $offset = null,
+        string $orderBy = null,
+        string $orderDirection = Select::ORDER_ASCENDING
+    )
+        : Collections\{{ class_name }}Collection
     {
         return (new Collections\{{ class_name }}Collection())
             ->fromResultSet(parent::getManyByWhere(
@@ -154,5 +159,25 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
                 $orderBy,
                 $orderDirection
             ));
+    }
+
+    public function getManyByField(
+        string $field,
+        $value,
+        int $limit = null,
+        int $offset = null,
+        $orderBy = null,
+        $orderDirection = Select::ORDER_ASCENDING
+    )
+        : Collections\{{ class_name }}Collection
+    {
+        return parent::getManyByField(
+                $field,
+                $value,
+                $limit,
+                $offset,
+                $orderBy,
+                $orderDirection
+        );
     }
 }

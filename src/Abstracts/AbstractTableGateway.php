@@ -5,6 +5,7 @@ namespace Benzine\ORM\Abstracts;
 use Benzine\Controllers\Filters\FilterCondition;
 use Benzine\Exceptions\BenzineException;
 use Benzine\Exceptions\DbRuntimeException;
+use Benzine\ORM\Interfaces\CollectionsInterface;
 use Benzine\ORM\Interfaces\ModelInterface;
 use Benzine\ORM\LaminatorSql;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -632,7 +633,9 @@ abstract class AbstractTableGateway extends TableGateway
             $select->offset($offset);
         }
 
-        return $this->selectWith($select);
+        $result = $this->selectWith($select);
+
+        return $result;
     }
 
     /**
@@ -642,9 +645,9 @@ abstract class AbstractTableGateway extends TableGateway
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      * @param mixed $value
      *
-     * @return null|array|\ArrayObject
+     * @return AbstractCollection
      */
-    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING): ?array
+    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         if ($value instanceof \DateTime) {
             $value = $value->format('Y-m-d H:i:s');

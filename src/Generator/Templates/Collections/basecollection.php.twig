@@ -6,7 +6,7 @@ use Benzine\ORM\Abstracts;
 use Benzine\ORM\Interfaces;
 use Benzine\ORM\Exception;
 use {{ namespace }}\Models;
-use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\ResultSet\ResultSetInterface;
 
 {% include '_overwrite_warning.twig' %}
 
@@ -38,7 +38,7 @@ abstract class AbstractBase{{ class_name }}Collection
 
 {% endfor %}
 
-    public function fromResultSet(ResultSet $resultSet) : AbstractBase{{ class_name }}Collection
+    public function fromResultSet(ResultSetInterface $resultSet) : AbstractBase{{ class_name }}Collection
     {
         foreach($resultSet as $result){
             if(!$result instanceof Models\{{ class_name }}Model){

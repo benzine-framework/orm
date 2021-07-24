@@ -2,6 +2,7 @@
 
 namespace {{ namespace }}\Models\Base;
 
+use {{ namespace }}\Collections;
 use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use {{ namespace }}\Services;
@@ -91,9 +92,8 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% for remote_object in remote_objects %}
 {% if remote_object.getLocalClass != class_name %}
 {% if remote_object.getLocalFunctionName|singularize|transform_camel_to_studly not in existingMethods %}
-    protected ?Models\{{ remote_object.getLocalClass }}Model $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
-    /** @var Models\{{ remote_object.getLocalClass }}Model[] */
-    protected array $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = [];
+    protected ?Models\{{ remote_object.getLocalClass }}Model $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object = null;
+    protected ?Collections\{{ remote_object.getLocalClass }}Collection $cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects = null;
 {% endif %}
 {% endif %}
 {% endfor %}
@@ -230,7 +230,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
     public function fetchRelated{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object(): ?Models\{{ related_object.getRemoteClass }}Model
 {% endif %}
     {
-        if (!isset($this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object)){
+        if (!$this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object instanceof Collections\{{ remote_object.getLocalClass }}Collection){
             $this->cached{{ related_object.getRemoteFunctionName|singularize|transform_camel_to_studly }}Object = $this->get{{ related_object.getRemoteVariable|transform_camel_to_studly }}Service()
                     ->getByField('{{ related_object.getRemoteBoundColumn }}', $this->{{ related_object.getLocalBoundColumnGetter }}());
         }
@@ -274,7 +274,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% endif %}
 
         // If it is cacheable, and there is something in the cache, return it
-        if($isCacheable && isset($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object)) {
+        if($isCacheable && $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object instanceof Collections\{{ remote_object.getLocalClass }}Collection) {
             return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Object;
         }
 
@@ -310,7 +310,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * @param null|string $orderBy Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
      * @param string $orderDirection Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
-     * @return Models\{{ remote_object.getLocalClass }}Model[]|null
+     * @return Collections\{{ remote_object.getLocalClass }}Collection
      *
      * @throws NotFoundException
      */
@@ -319,7 +319,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         int $offset = null,
         string $orderBy = null,
         string $orderDirection='ASC'
-    ): ?array {
+    ): Collections\{{ remote_object.getLocalClass }}Collection {
         // Determine if this lookup is cacheable.
         $isCacheable = false;
         if (!$limit && !$offset && !$orderBy && $orderDirection = 'ASC'){
@@ -327,7 +327,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         }
 
         // If it is cacheable, and there is something in the cache, return it
-        if ($isCacheable && count($this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects) > 0){
+        if ($isCacheable && $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects instanceof Collections\{{ remote_object.getLocalClass }}Collection){
             return $this->cached{{ remote_object.getLocalFunctionName|singularize|transform_camel_to_studly }}Objects;
         }
 
