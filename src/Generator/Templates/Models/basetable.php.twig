@@ -7,6 +7,7 @@ use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use Faker\Generator;
 use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 use Benzine\ORM\Abstracts\AbstractModel;
@@ -142,11 +143,19 @@ abstract class AbstractBase{{ class_name }}TableGateway extends AbstractTableGat
         return parent::fetchRandom();
     }
 
+    /**
+     * @param Where $where
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param null|string|Expression $orderBy
+     * @param string $orderDirection
+     * @return \Laminas\Db\ResultSet\ResultSetInterface
+     */
     public function getManyByWhere(
         Where $where,
         int $limit = null,
         int $offset = null,
-        string $orderBy = null,
+        $orderBy = null,
         string $orderDirection = Select::ORDER_ASCENDING
     )
         : Collections\{{ class_name }}Collection

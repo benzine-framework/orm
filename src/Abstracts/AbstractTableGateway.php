@@ -611,7 +611,15 @@ abstract class AbstractTableGateway extends TableGateway
         return $row;
     }
 
-    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
+    /**
+     * @param Where $where
+     * @param int|null $limit
+     * @param int|null $offset
+     * @param null|string|Expression $orderBy
+     * @param string $orderDirection
+     * @return \Laminas\Db\ResultSet\ResultSetInterface
+     */
+    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         $select = $this->sql->select();
 
