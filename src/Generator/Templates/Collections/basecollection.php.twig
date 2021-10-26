@@ -69,4 +69,13 @@ abstract class AbstractBase{{ class_name }}Collection
 
         $this->contained[$offset] = $value;
     }
+
+    public function iterate($callback, ...$callbackArguments){
+        foreach ($this->contained as $contained) {
+            $iterationArguments = $callbackArguments;
+            array_unshift($iterationArguments, $contained);
+            call_user_func_array($callback, $iterationArguments);
+        }
+        return $this;
+    }
 }
