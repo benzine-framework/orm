@@ -18,6 +18,7 @@ class Entity
     protected CaseTransformer $transCamel2Snake;
     protected CaseTransformer $transField2Property;
     protected CaseTransformer $transCamel2ScreamingSnake;
+    protected CaseTransformer $transStudly2Snake;
     private Laminator $Laminator;
 
     public function __construct()
@@ -31,6 +32,7 @@ class Entity
         $this->transSnake2Spinal = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
         $this->transCamel2Snake = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
         $this->transCamel2ScreamingSnake = new CaseTransformer(new Format\CamelCase(), new Format\ScreamingSnakeCase());
+        $this->transStudly2Snake = new CaseTransformer(new Format\StudlyCaps(), new Format\SnakeCase());
 
         $this->transField2Property = $this->transCamel2Camel;
     }

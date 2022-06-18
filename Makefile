@@ -21,4 +21,4 @@ clean:
 	${DC_RUN} test vendor/bin/php-cs-fixer fix
 
 test: clear setup migrate regen clean
-	${DC_RUN} test vendor/bin/phpunit
+	${DC_RUN} test vendor/bin/phpunit --stop-on-error --stop-on-failure

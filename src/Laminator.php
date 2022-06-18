@@ -47,7 +47,6 @@ class Laminator
     private TwigFileSystemLoader $loader;
     private TwigEnvironment $twig;
     private Databases $databases;
-    private array $ignoredTables = [];
     private \SimpleXMLElement $coverageReport;
     private bool $waitForKeypressEnabled = true;
 
@@ -103,11 +102,6 @@ class Laminator
 
         $fct = new \Twig\TwigFunction('var_export', 'var_export');
         $this->twig->addFunction($fct);
-
-        // Skip tables specified in configuration.
-        if (isset($this->config['database'], $this->config['database']['skip_tables'])) {
-            $this->ignoredTables = $this->config['database']['skip_tables'];
-        }
 
         $this->transSnake2Studly = new CaseTransformer(new Format\SnakeCase(), new Format\StudlyCaps());
         $this->transStudly2Camel = new CaseTransformer(new Format\StudlyCaps(), new Format\CamelCase());
@@ -298,7 +292,7 @@ class Laminator
             echo 'Collecting '.count($tables)." entities data.\n";
 
             foreach ($tables as $table) {
-                if (in_array($table->getName(), $this->ignoredTables, true)) {
+                if (in_array($table->getName(), $database->getIgnoredTables(), true)) {
                     continue;
                 }
                 $oModel = Components\Model::Factory($this)
@@ -321,6 +315,9 @@ class Laminator
             /** @var Database $database */
             $tables = $database->getMetadata()->getTables();
             foreach ($tables as $table) {
+                if (in_array($table->getName(), $database->getIgnoredTables(), true)) {
+                    continue;
+                }
                 $key = $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()];
                 $models[$key]
                     ->computeColumns($table->getColumns())

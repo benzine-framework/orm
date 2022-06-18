@@ -5,7 +5,7 @@ namespace {{ namespace }}\Test\Api\Generated;
 use {{ app_core }} as App;
 use {{ namespace }}\Models\{{ class_name }}Model;
 use {{ namespace }}\Services\{{ class_name }}Service;
-use Benzine\Tests\RoutesTestCase;
+use Benzine\Tests\AbstractRoutesTestCase;
 
 /**
  * @covers \{{ namespace }}\Controllers\{{ class_name }}Controller
@@ -15,7 +15,7 @@ use Benzine\Tests\RoutesTestCase;
  * @group api
  * @internal
  */
-class {{ class_name }}EndpointTest extends RoutesTestCase
+class {{ class_name }}EndpointTest extends AbstractRoutesTestCase
 {
     public const MODEL_NAME = '{{ class_name }}';
 
@@ -34,7 +34,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
         $new{{ class_name }}Array = $new{{ class_name }}->__toArray();
 
         $method = 'PUT';
-        $uri = '/v1/{{ controller_route}}';
+        $uri = '/api/crud/{{ controller_route}}';
 
         $response = $this->request(
             $method,
@@ -84,7 +84,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
             'Okay',
             $responseJson['Status'],
             sprintf(
-                "Verify that request to PUT /v1/{{ controller_route }} returns an \"Status: Okay\" response.\n This failed because %s",
+                "Verify that request to PUT /api/crud/{{ controller_route }} returns an \"Status: Okay\" response.\n This failed because %s",
                 isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'
             )
         );
@@ -110,7 +110,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
             '{{ column.field }}' => null,
 {% endfor %}
         ];
-        $response = $this->request('PUT', '/v1/{{ controller_route}}', $new{{ class_name }});
+        $response = $this->request('PUT', '/api/crud/{{ controller_route}}', $new{{ class_name }});
         $this->waypoint('API PUT REST REQUEST');
         $body = (string) $response->getBody();
         $this->assertTrue(
@@ -145,8 +145,11 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
      */
     public function test{{ class_name }}Get($id)
     {
+        $method = "GET";
+        $uri = "/api/crud/{{ controller_route}}/{$id}";
+
         $this->waypoint('Begin');
-        $response = $this->request('GET', '/v1/{{ controller_route}}/{$id}');
+        $response = $this->request($method, $uri);
         $this->waypoint('API GET REST REQUEST');
         $body = (string) $response->getBody();
         $this->assertTrue(
@@ -159,6 +162,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
                 true
             ),
             "Response was not expected 200 or 400.\n".
+            "Request: {$method} => {$uri}\n".
             "Response body is: \n".
             " ******************************\n{$body}\n ******************************\n"
         );
@@ -169,7 +173,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
         $responseJson = json_decode((string) $body, true);
         $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /v1/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /api/crud/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
         $this->assertArrayHasKey('{{ object_name_singular }}', $responseJson);
         $this->waypoint('Some assertions');
 
@@ -182,8 +186,11 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
      */
     public function test{{ class_name }}List()
     {
+        $method = "GET";
+        $uri = "/api/crud/{{ controller_route}}";
+
         $this->waypoint('Begin');
-        $response = $this->request('GET', '/v1/{{ controller_route}}');
+        $response = $this->request($method, $uri);
         $this->waypoint('API REST REQUEST');
         $body = (string) $response->getBody();
         $this->assertTrue(
@@ -196,6 +203,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
                 true
             ),
             "Response was not expected 200 or 400.\n".
+            "Request: {$method} => {$uri}\n".
             "Response body is: \n".
             " ******************************\n{$body}\n ******************************\n"
         );
@@ -206,7 +214,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
         $responseJson = json_decode((string) $body, true);
         $this->waypoint('JSON DECODE');
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /v1/{{ controller_route }} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to GET /api/crud/{{ controller_route }} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
         $this->assertArrayHasKey('{{ object_name_plural }}', $responseJson);
         $this->waypoint('Some assertions');
         $this->validate{{ class_name }}Object(reset($responseJson['{{ object_name_plural }}']));
@@ -222,7 +230,10 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
      */
     public function test{{ class_name }}Delete($id)
     {
-        $response = $this->request('DELETE', '/v1/{{ controller_route}}/{$id}');
+        $method = "DELETE";
+        $uri = "/api/crud/{{ controller_route}}/{$id}";
+
+        $response = $this->request($method, $uri);
         $body = (string) $response->getBody();
         $this->assertTrue(
             in_array(
@@ -234,12 +245,13 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
                 true
             ),
             "Response was not expected 200 or 400.\n".
+            "Request: {$method} => {$uri}\n".
             "Response body is: \n".
             " ******************************\n{$body}\n ******************************\n"
         );
         $responseJson = json_decode((string) $body, true);
         $this->assertArrayHasKey('Status', $responseJson);
-        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to DELETE /v1/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
+        $this->assertEquals('Okay', $responseJson['Status'], 'Verify that request to DELETE /api/crud/{{ controller_route }}/{$id} returns an "Status: Okay" response.  This failed. '.(isset($responseJson['Reason']) ? 'Reason: '.$responseJson['Reason'] : 'No Reason Given'));
         $this->assertEquals('DELETE', $responseJson['Action']);
         $this->assertArrayHasKey('{{ object_name_singular }}', $responseJson);
         $this->validate{{ class_name }}Object($responseJson['{{ class_name }}']);
@@ -254,7 +266,7 @@ class {{ class_name }}EndpointTest extends RoutesTestCase
      */
     public function test{{ class_name }}DeleteVerify($id)
     {
-        $response = $this->request('GET', "/v1/{{ controller_route}}/{$id}");
+        $response = $this->request('GET', "/api/crud/{{ controller_route}}/{$id}");
         $body = (string) $response->getBody();
         $this->assertNotNull(
             json_decode((string) $body),

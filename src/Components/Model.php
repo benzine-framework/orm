@@ -128,6 +128,11 @@ class Model extends Entity
         return $this->transStudly2Studly->transform($this->getTableSanitised());
     }
 
+    public function getEndpointName(): string
+    {
+        return $this->transStudly2Snake->transform($this->getClassName());
+    }
+
     /**
      * Get the table name, sanitised by removing any prefixes as per Laminator.yml.
      *
@@ -343,6 +348,7 @@ class Model extends Entity
             'app_core' => $this->getLaminator()->getBenzineConfig()->getCore(),
             //'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
             'class_name' => $this->getClassName(),
+            'endpoint_name' => $this->getEndpointName(),
             'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
             'name' => $this->getClassName(),
             'object_name_plural' => Inflect::pluralize($this->getClassName()),

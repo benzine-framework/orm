@@ -16,6 +16,7 @@ class Database
     private string $password;
     private string $database;
     private string $charset = 'utf8mb4';
+    private array $ignoredTables = [];
 
     /** @var callable[] */
     private array $onConnect;
@@ -44,6 +45,9 @@ class Database
         }
         if (isset($config['charset'])) {
             $this->setCharset($config['charset']);
+        }
+        if (isset($config['skip_tables'])){
+            $this->setIgnoredTables($config['skip_tables']);
         }
     }
 
@@ -154,6 +158,25 @@ class Database
     {
         return new Metadata($this->getAdapter());
     }
+
+    /**
+     * @return array
+     */
+    public function getIgnoredTables(): array
+    {
+        return $this->ignoredTables;
+    }
+
+    /**
+     * @param array $ignoredTables
+     * @return Database
+     */
+    public function setIgnoredTables(array $ignoredTables): Database
+    {
+        $this->ignoredTables = $ignoredTables;
+        return $this;
+    }
+
 
     public function getArray(): array
     {

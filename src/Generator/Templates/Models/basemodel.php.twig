@@ -455,7 +455,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
 {% if column.getDbType in ['datetime', 'timestamp'] %}
         $this->{{ column.getFieldSanitised }} =
                 ${{ column.getDbField() }} !== null
-                    ? DateTime::createFromFormat("Y-m-d H:i:s", ${{ column.getDbField() }})
+                    ? new DateTime(${{ column.getDbField() }})
                     : null ;
 {% else %}
         $this->{{ column.getFieldSanitised }} = ${{ column.getDbField() }};

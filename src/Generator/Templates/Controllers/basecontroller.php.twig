@@ -4,6 +4,9 @@ namespace {{ namespace }}\Controllers\Base;
 
 use {{ namespace }}\Services;
 use Benzine\Controllers\AbstractCrudController;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
+use Benzine\Annotations\Route;
 
 {% include '_overwrite_warning.twig' %}
 
@@ -19,4 +22,38 @@ abstract class AbstractBase{{ class_name }}Controller extends AbstractCrudContro
     {
         return $this->service;
     }
+
+    /**
+     * @Route(methods={"GET"},path="/api/crud/{{ endpoint_name }}")
+     */
+    public function listRequest(Request $request, Response $response): Response
+    {
+        return parent::listRequest($request,$response);
+    }
+
+    /**
+     * @Route(methods={"GET"},path="/api/crud/{{ endpoint_name }}/{id}")
+     */
+    public function getRequest(Request $request, Response $response, $args): Response
+    {
+        return parent::getRequest($request, $response, $args);
+    }
+
+    /**
+     * @Route(methods={"PUT"},path="/api/crud/{{ endpoint_name }}")
+     * @Route(methods={"PUT"},path="/api/crud/{{ endpoint_name }}/{id}")
+     */
+    public function createRequest(Request $request, Response $response, $args): Response
+    {
+        return parent::createRequest($request, $response, $args);
+    }
+
+    /**
+     * @Route(methods={"DELETE"},path="/api/crud/{{ endpoint_name }}/{id}")
+     */
+    public function deleteRequest(Request $request, Response $response, $args): Response
+    {
+        return parent::deleteRequest($request, $response, $args);
+    }
+
 }
