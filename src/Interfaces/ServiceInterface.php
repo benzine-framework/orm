@@ -7,7 +7,7 @@ use Laminas\Db\Sql\Expression;
 interface ServiceInterface
 {
     /**
-     * @param string|Expression| null $order
+     * @param null|Expression|string $order
      *
      * @return ModelInterface[]
      */

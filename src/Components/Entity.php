@@ -43,6 +43,7 @@ class Entity
     public static function Factory(Laminator $Laminator)
     {
         $class = get_called_class();
+
         /** @var self $instance */
         $instance = new $class();
         $instance->setLaminator($Laminator);

@@ -25,8 +25,10 @@ class Column extends Entity
     protected $defaultValueIsLiteral = false;
     protected $isAutoIncrement = false;
     protected $isUnique = false;
+
     /** @var RelatedModel[] */
     protected $relatedObjects = [];
+
     /** @var RelatedModel[] */
     protected $remoteObjects = [];
 

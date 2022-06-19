@@ -34,6 +34,7 @@ class Profiler implements ProfilerInterface
             $this->sql = $target;
         } else {
             $this->sql = $target->getSql();
+
             /** @var ParameterContainer $parameterContainer */
             $parameterContainer = $target->getParameterContainer();
             foreach ($parameterContainer->getNamedArray() as $key => $value) {
@@ -48,7 +49,7 @@ class Profiler implements ProfilerInterface
     {
         $uuid = UUID::v4();
         $executionTime = microtime(true) - $this->timer;
-        //$this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
+        // $this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
         $this->queryTimes[$uuid] = $executionTime;
         $this->queries[$uuid] = [$this->sql, debug_backtrace()];
         $this->sql = null;

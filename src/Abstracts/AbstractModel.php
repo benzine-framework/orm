@@ -212,7 +212,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         $dirtyProperties = [];
         foreach ($this->getListOfProperties() as $property) {
             $originalProperty = $transformer->transform($property);
-            //echo "Writing into \$this->{$originalProperty}: getListOfDirtyProperties\n";
+            // echo "Writing into \$this->{$originalProperty}: getListOfDirtyProperties\n";
             if (!isset($this->_original[$originalProperty]) || $this->{$property} != $this->_original[$originalProperty]) {
                 $dirtyProperties[$property] = [
                     'before' => $this->_original[$originalProperty] ?? null,

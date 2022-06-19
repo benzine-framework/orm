@@ -5,7 +5,6 @@ namespace Benzine\ORM\Abstracts;
 use Benzine\Controllers\Filters\FilterCondition;
 use Benzine\Exceptions\BenzineException;
 use Benzine\Exceptions\DbRuntimeException;
-use Benzine\ORM\Interfaces\CollectionsInterface;
 use Benzine\ORM\Interfaces\ModelInterface;
 use Benzine\ORM\LaminatorSql;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -188,7 +187,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function update($data, $where = null, $oldData = [])
     {
         $data = array_filter($data);
-        //!\Kint::dump($data, $oldData, $where);exit;
+        // !\Kint::dump($data, $oldData, $where);exit;
         return parent::update($data, $where);
     }
 
@@ -219,7 +218,7 @@ abstract class AbstractTableGateway extends TableGateway
                 $select->offset($offset);
             }
         }
-        //\Kint::dump($limit, $offset, $wheres, $order, $direction);
+        // \Kint::dump($limit, $offset, $wheres, $order, $direction);
         if (null != $wheres) {
             foreach ($wheres as $conditional) {
                 if ($conditional instanceof \Closure) {
@@ -333,7 +332,7 @@ abstract class AbstractTableGateway extends TableGateway
         $select->quantifier(Select::QUANTIFIER_DISTINCT);
         $select->columns([$distinctColumn]);
 
-        //\Kint::dump($distinctColumn, $wheres);
+        // \Kint::dump($distinctColumn, $wheres);
         if (null != $wheres) {
             foreach ($wheres as $conditional) {
                 if ($conditional instanceof \Closure) {
@@ -612,11 +611,12 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param Where $where
-     * @param int|null $limit
-     * @param int|null $offset
-     * @param null|string|Expression $orderBy
-     * @param string $orderDirection
+     * @param Where                  $where
+     * @param null|int               $limit
+     * @param null|int               $offset
+     * @param null|Expression|string $orderBy
+     * @param string                 $orderDirection
+     *
      * @return \Laminas\Db\ResultSet\ResultSetInterface
      */
     public function getManyByWhere(Where $where, int $limit = null, int $offset = null, $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
@@ -641,9 +641,7 @@ abstract class AbstractTableGateway extends TableGateway
             $select->offset($offset);
         }
 
-        $result = $this->selectWith($select);
-
-        return $result;
+        return $this->selectWith($select);
     }
 
     /**
@@ -702,7 +700,7 @@ abstract class AbstractTableGateway extends TableGateway
      */
     public function getByPrimaryKey(array $primaryKeys)
     {
-        //\Kint::dump($primaryKeys);
+        // \Kint::dump($primaryKeys);
         $row = $this->select($primaryKeys)->current();
         if (!$row) {
             return null;

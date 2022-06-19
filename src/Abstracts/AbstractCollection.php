@@ -6,7 +6,8 @@ abstract class AbstractCollection
 {
     protected array $contained = [];
 
-    public function __toArray() : array {
+    public function __toArray(): array
+    {
         return $this->contained;
     }
 

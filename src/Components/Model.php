@@ -15,6 +15,7 @@ class Model extends Entity
     protected string $namespace;
     protected Database $database;
     protected string $table;
+
     /** @var Column[] */
     protected array $columns = [];
     protected array $constraints = [];
@@ -36,15 +37,15 @@ class Model extends Entity
      */
     public function computeConstraints(array $models, array $keyMap, array $zendConstraints): self
     {
-        //echo "Computing the constraints of {$this->getClassName()}\n";
+        // echo "Computing the constraints of {$this->getClassName()}\n";
         foreach ($zendConstraints as $zendConstraint) {
             if ('FOREIGN KEY' == $zendConstraint->getType()) {
-                //\Kint::dump($this->getTable(), $this->getClassPrefix(), $zendConstraint->getTableName());
+                // \Kint::dump($this->getTable(), $this->getClassPrefix(), $zendConstraint->getTableName());
                 $keyMapIdLocal = $zendConstraint->getSchemaName().'::'.$zendConstraint->getTableName();
                 $keyMapIdRemote = $zendConstraint->getReferencedTableSchema().'::'.$zendConstraint->getReferencedTableName();
                 $localRelatedModel = $models[$keyMap[$keyMapIdLocal]];
                 $remoteRelatedModel = $models[$keyMap[$keyMapIdRemote]];
-                //\Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
+                // \Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
 
                 /*printf(
                     " > Related > We're generating a \"%s\", which is related to link from \"%s\" to \"%s\".\n",
@@ -90,7 +91,7 @@ class Model extends Entity
             foreach ($this->relatedObjects as $relatedObject) {
                 /** @var RelatedModel $relatedObject */
                 $localBoundVariable = $this->transStudly2Camel->transform($relatedObject->getLocalBoundColumn());
-                //echo "In {$this->getClassName()} column {$localBoundVariable} has a related object called {$relatedObject->getLocalClass()}::{$relatedObject->getRemoteClass()}\n";
+                // echo "In {$this->getClassName()} column {$localBoundVariable} has a related object called {$relatedObject->getLocalClass()}::{$relatedObject->getRemoteClass()}\n";
                 $this->columns[$localBoundVariable]
                     ->addRelatedObject($relatedObject)
                 ;
@@ -166,9 +167,9 @@ class Model extends Entity
      */
     public function scanForRemoteRelations(array &$models): void
     {
-        //echo "Scan: {$this->getClassName()}\n";
+        // echo "Scan: {$this->getClassName()}\n";
         foreach ($this->getColumns() as $column) {
-            //echo " > {$column->getField()}:\n";
+            // echo " > {$column->getField()}:\n";
             if (count($column->getRelatedObjects()) > 0) {
                 foreach ($column->getRelatedObjects() as $relatedObject) {
                     $remoteObject = clone $relatedObject;
@@ -346,7 +347,7 @@ class Model extends Entity
             'table' => $this->getTable(),
             'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
             'app_core' => $this->getLaminator()->getBenzineConfig()->getCore(),
-            //'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
+            // 'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
             'class_name' => $this->getClassName(),
             'endpoint_name' => $this->getEndpointName(),
             'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
@@ -406,10 +407,10 @@ class Model extends Entity
         foreach ($this->getRelatedObjects() as $relatedObject) {
             $sharedAssets[$relatedObject->getRemoteClass()] = $relatedObject;
         }
-        //if(count($this->getRelatedObjects())) {
+        // if(count($this->getRelatedObjects())) {
         //    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
         //    exit;
-        //}
+        // }
         return $sharedAssets;
     }
 
@@ -508,7 +509,7 @@ class Model extends Entity
         if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/pre-replace")) {
             $replacements = Laminator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/pre-replace");
             foreach ($replacements as $before => $after) {
-                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                // echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $columnName = str_replace($before, $after, $columnName);
             }
         }
@@ -519,7 +520,7 @@ class Model extends Entity
         if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/replace")) {
             $replacements = Laminator::BenzineConfig()->getArray("benzine/databases/{$database}/column_options/_/replace");
             foreach ($replacements as $before => $after) {
-                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                // echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $columnName = str_replace($before, $after, $columnName);
             }
         }

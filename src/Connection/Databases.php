@@ -10,6 +10,7 @@ class Databases
 {
     protected ConfigurationService $configurationService;
     protected Logger $logger;
+
     /** @var Database[] */
     protected static array $databases = [];
 

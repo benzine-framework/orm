@@ -8,6 +8,7 @@ use Benzine\ORM\Abstracts\AbstractService;
 class TableRow
 {
     private array $data = [];
+
     /** @var AbstractModel[] */
     private array $related;
 
@@ -19,6 +20,7 @@ class TableRow
             if (isset($options['service'])) {
                 /** @var AbstractService $service */
                 $service = $options['service'];
+
                 /** @var AbstractModel $relatedEntity */
                 $relatedEntity = $service->getByField($field, $this->data[$field]);
                 $this->related[$field] = $relatedEntity;
@@ -30,11 +32,11 @@ class TableRow
     {
         $output = [];
         foreach ($this->data as $field => $value) {
-            //!\Kint::dump($field, $this->related[$field]);
+            // !\Kint::dump($field, $this->related[$field]);
             $output[$field] = isset($this->related[$field]) ? $this->related[$field]->label() : $value;
         }
-        //!\Kint::dump($output);
-        //exit;
+        // !\Kint::dump($output);
+        // exit;
 
         return $output;
     }

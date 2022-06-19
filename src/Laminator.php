@@ -3,7 +3,6 @@
 namespace Benzine\ORM;
 
 use Benzine\App;
-use Benzine\Configuration\Configuration;
 use Benzine\Configuration\Exceptions\Exception;
 use Benzine\Exceptions\BenzineException;
 use Benzine\ORM\Components\Model;
@@ -211,7 +210,7 @@ class Laminator
         if (self::$benzineConfig->has("databases/{$database->getName()}/table_options/_/replace")) {
             $replacements = self::$benzineConfig->getArray("databases/{$database->getName()}/table_options/_/replace");
             foreach ($replacements as $before => $after) {
-                //echo "  > Replacing {$before} with {$after} in {$tableName}\n";
+                // echo "  > Replacing {$before} with {$after} in {$tableName}\n";
                 $tableName = str_replace($before, $after, $tableName);
             }
         }
@@ -286,6 +285,7 @@ class Laminator
         foreach ($this->databases->getAll() as $dbName => $database) {
             /** @var Database $database */
             echo "Database: {$dbName}\n";
+
             /** @var TableObject $tables */
             $tables = $database->getMetadata()->getTables();
 
@@ -329,7 +329,7 @@ class Laminator
         ksort($models);
 
         // Scan for remote relations
-        //\Kint::dump(array_keys($models));
+        // \Kint::dump(array_keys($models));
         foreach ($models as $oModel) {
             $oModel->scanForRemoteRelations($models);
         }
@@ -339,7 +339,7 @@ class Laminator
         foreach ($models as $oModel) {
             if (count($oModel->getRemoteObjects()) > 0) {
                 foreach ($oModel->getRemoteObjects() as $remoteObject) {
-                    //echo "Base{$remoteObject->getLocalClass()}Model::fetch{$remoteObject->getRemoteClass()}Object\n";
+                    // echo "Base{$remoteObject->getLocalClass()}Model::fetch{$remoteObject->getRemoteClass()}Object\n";
                     if (!isset($conflictCheck[$remoteObject->getLocalClass()][$remoteObject->getRemoteClass()])) {
                         $conflictCheck[$remoteObject->getLocalClass()][$remoteObject->getRemoteClass()] = $remoteObject;
                     } else {
@@ -351,13 +351,13 @@ class Laminator
         }
 
         // Bit of Diag...
-        //foreach($models as $oModel){
+        // foreach($models as $oModel){
         //    if(count($oModel->getRemoteObjects()) > 0) {
         //        foreach ($oModel->getRemoteObjects() as $remoteObject) {
         //            echo " > {$oModel->getClassName()} has {$remoteObject->getLocalClass()} on {$remoteObject->getLocalBoundColumn()}:{$remoteObject->getRemoteBoundColumn()} (Function: {$remoteObject->getLocalFunctionName()})\n";
         //        }
         //    }
-        //}
+        // }
 
         // Finally return some models.
         return $models;
@@ -407,7 +407,7 @@ class Laminator
             // "Model" suite
             echo " > {$model->getClassName()}\n";
 
-            //\Kint::dump($model->getRenderDataset());
+            // \Kint::dump($model->getRenderDataset());
             if (in_array('Models', $this->getBenzineConfig()->getLaminatorTemplates(), true)) {
                 $this->renderToFile(true, "src/Models/Base/AbstractBase{$model->getClassName()}Model.php", 'Models/basemodel.php.twig', $model->getRenderDataset());
                 $this->renderToFile(false, "src/Models/{$model->getClassName()}Model.php", 'Models/model.php.twig', $model->getRenderDataset());
@@ -454,14 +454,14 @@ class Laminator
             (new Filesystem())->mkdir(dirname($path), 0777);
         }
         if (!(new Filesystem())->exists($path) || $overwrite) {
-            //printf(" [Done]" . PHP_EOL);
+            // printf(" [Done]" . PHP_EOL);
             (new Filesystem())->dumpFile($path, $output);
         }
-        //printf(" [Skip]" . PHP_EOL);
+        // printf(" [Skip]" . PHP_EOL);
 
         // Make permissions match the expected owners/groups/perms
         (new Filesystem())->chown($path, $this->expectedFileOwner);
-        //(new Filesystem())->chgrp($path, $this->expectedFileGroup);
+        // (new Filesystem())->chgrp($path, $this->expectedFileGroup);
         (new Filesystem())->chmod($path, $this->expectedPermissions);
 
         return $this;

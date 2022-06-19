@@ -46,7 +46,7 @@ class Database
         if (isset($config['charset'])) {
             $this->setCharset($config['charset']);
         }
-        if (isset($config['skip_tables'])){
+        if (isset($config['skip_tables'])) {
             $this->setIgnoredTables($config['skip_tables']);
         }
     }
@@ -169,14 +169,15 @@ class Database
 
     /**
      * @param array $ignoredTables
+     *
      * @return Database
      */
     public function setIgnoredTables(array $ignoredTables): Database
     {
         $this->ignoredTables = $ignoredTables;
+
         return $this;
     }
-
 
     public function getArray(): array
     {
@@ -201,6 +202,7 @@ class Database
     {
         /** @var Databases $databases */
         $databases = App::DI(Databases::class);
+
         /** @var Database $database */
         $database = $databases->getDatabase('default');
 
