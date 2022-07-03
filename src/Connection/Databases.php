@@ -54,9 +54,10 @@ class Databases
         return self::$databases;
     }
 
-    public function waitForConnectivity($delayIntervalSeconds = 15) : void {
+    public function waitForConnectivity($delayIntervalSeconds = 15): void
+    {
         $success = false;
-        while($success == false) {
+        while ($success == false) {
             try {
                 foreach ($this->getAll() as $database) {
                     $database->waitForConnectivity();
