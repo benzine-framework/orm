@@ -4,6 +4,7 @@ namespace Benzine\ORM\Connection;
 
 use Benzine\Exceptions\BenzineException;
 use Benzine\Services\ConfigurationService;
+use Laminas\Db\Exception\RuntimeException;
 use Monolog\Logger;
 
 class Databases
@@ -23,7 +24,7 @@ class Databases
 
         foreach ($this->configurationService->get('databases') as $name => $config) {
             if (!isset(self::$databases[$name])) {
-                $database = new Database($name, $config);
+                $database = new Database($logger, $name, $config);
                 if ('mysql' == $database->getType()) {
                     $database->onConnect(function (Database $database): void {
                         $database->getAdapter()
@@ -51,5 +52,20 @@ class Databases
     public function getAll(): array
     {
         return self::$databases;
+    }
+
+    public function waitForConnectivity($delayIntervalSeconds = 15) : void {
+        $success = false;
+        while($success == false) {
+            try {
+                foreach ($this->getAll() as $database) {
+                    $database->waitForConnectivity();
+                }
+                $success = true;
+            } catch (RuntimeException $rte) {
+                $this->logger->critical(sprintf("Couldn't connect to database: %s", $rte->getMessage()));
+            }
+            sleep($delayIntervalSeconds);
+        }
     }
 }

@@ -6,6 +6,7 @@ use Benzine\ORM\Tests\App;
 use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Metadata\Metadata;
+use Monolog\Logger;
 
 class Database
 {
@@ -23,7 +24,11 @@ class Database
 
     private ?Adapter $adapter = null;
 
-    public function __construct(string $name = null, array $config = null)
+    public function __construct(
+        private Logger $logger,
+        string $name = null,
+        array $config = null
+    )
     {
         if ($name) {
             $this->setName($name);
@@ -212,5 +217,18 @@ class Database
     private function getConnection(): ConnectionInterface
     {
         return $this->getAdapter()->getDriver()->getConnection();
+    }
+
+    public function waitForConnectivity() : void
+    {
+        $success = false;
+        while(!$success) {
+            try {
+                $this->getConnection()->execute("SELECT 1");
+                $success = true;
+            } catch (\PDOException $exception) {
+                $this->logger->critical(sprintf("Could not connect to database \"%s\"", $this->getName()));
+            }
+        }
     }
 }
