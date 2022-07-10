@@ -40,4 +40,14 @@ abstract class AbstractCollection
     {
         return count($this->contained);
     }
+
+    public function call($functionName)
+    {
+        $return = [];
+        foreach ($this->contained as $index => $contained) {
+            $return[$index] = $contained->{$functionName}();
+        }
+
+        return $return;
+    }
 }
