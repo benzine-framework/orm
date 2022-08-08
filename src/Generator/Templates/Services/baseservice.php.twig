@@ -53,7 +53,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|Expression|string $order
      * @param null|string            $orderDirection
      *
-     * @return Collections\{{ class_name }}Collection
+     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
      */
     public function getAll(
         int $limit = null,
@@ -111,7 +111,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|string $orderBy Field to sort by
      * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return Collections\{{ class_name }}Collection
+     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
      */
     public function getManyByWhere(
         Where $where,
@@ -150,7 +150,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param null|string $orderBy Field to sort by
      * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-     * @return Collections\{{ class_name }}Collection
+* @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
      */
     public function getManyByField(
         string $field,
@@ -220,7 +220,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      * @param int $limit Limit the number of matches returned
      *
-     * @return Collections\{{ class_name }}Collection
+     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
      */
     public function getManyMatching(
         $keyValue = [],

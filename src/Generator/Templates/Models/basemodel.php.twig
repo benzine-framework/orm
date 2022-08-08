@@ -310,7 +310,7 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
      * @param null|string $orderBy Column to order by. Recommended to use the Constants in Models\{{ remote_object.getLocalClass }}Model::
      * @param string $orderDirection Either "DESC" or "ASC". Recommend using Select::ORDER_ASCENDING or Select::ORDER_DESCENDING
      *
-     * @return Collections\{{ remote_object.getLocalClass }}Collection
+     * @return Collections\{{ remote_object.getLocalClass }}Collection|Models\{{ remote_object.getLocalClass }}Model[]
      *
      * @throws NotFoundException
      */
