@@ -57,7 +57,7 @@ class Table
 
             $limit = $this->perPage;
 
-            $offset = ($this->page) * $this->perPage;
+            $offset = $this->page * $this->perPage;
 
             $where = (new Where());
 
