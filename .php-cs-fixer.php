@@ -34,7 +34,7 @@ return PhpCsFixer\Config::create()
         'no_php4_constructor' => true,
         'no_unused_imports' => true,
         'no_useless_else' => true,
-        'no_superfluous_phpdoc_tags' => true,
+        'no_superfluous_phpdoc_tags' => false,
         'void_return' => true,
         'yoda_style' => false,
     ])
