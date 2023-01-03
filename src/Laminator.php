@@ -15,7 +15,6 @@ use Benzine\Twig\Extensions\InflectionExtension;
 use Benzine\Twig\Extensions\TransformExtension;
 use Camel\CaseTransformer;
 use Camel\Format;
-use DirectoryIterator;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Stdlib\ConsoleHelper;
 use Symfony\Component\Filesystem\Filesystem;
@@ -174,9 +173,9 @@ class Laminator
     /**
      * @param $schemaName
      *
-     * @throws SchemaToAdaptorException
-     *
      * @return int|string
+     *
+     * @throws SchemaToAdaptorException
      */
     public function schemaName2databaseName($schemaName)
     {
@@ -256,11 +255,11 @@ class Laminator
     }
 
     /**
+     * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     *
-     * @return $this
      */
     public function makeLaminator()
     {
@@ -378,7 +377,7 @@ class Laminator
         ];
         foreach ($generatedPaths as $generatedPath) {
             if ((new Filesystem())->exists($generatedPath)) {
-                foreach (new DirectoryIterator($generatedPath) as $file) {
+                foreach (new \DirectoryIterator($generatedPath) as $file) {
                     if (!$file->isDot() && 'php' == $file->getExtension()) {
                         (new Filesystem())->remove($file->getRealPath());
                     }
@@ -392,11 +391,11 @@ class Laminator
     /**
      * @param Model[] $models
      *
+     * @return Laminator
+     *
      * @throws LoaderError  When the template cannot be found
      * @throws SyntaxError  When an error occurred during compilation
      * @throws RuntimeError When an error occurred during rendering
-     *
-     * @return Laminator
      */
     private function makeCoreFiles(array $models)
     {

@@ -402,9 +402,9 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @throws BenzineException
-     *
      * @return null|ModelInterface
+     *
+     * @throws BenzineException
      */
     public function fetchRandom()
     {
