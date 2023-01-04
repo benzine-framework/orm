@@ -11,6 +11,11 @@ abstract class AbstractCollection
         return $this->contained;
     }
 
+    public function first()
+    {
+        return reset($this->contained);
+    }
+
     public function getIterator()
     {
         return new \ArrayIterator($this->contained);
