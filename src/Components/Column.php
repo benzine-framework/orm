@@ -269,9 +269,9 @@ class Column extends Entity
     /**
      * @param mixed $dbType
      *
-     * @return Column
-     *
      * @throws DBTypeNotTranslatedException
+     *
+     * @return Column
      */
     public function setDbType($dbType)
     {

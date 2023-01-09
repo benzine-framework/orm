@@ -173,9 +173,9 @@ class Laminator
     /**
      * @param $schemaName
      *
-     * @return int|string
-     *
      * @throws SchemaToAdaptorException
+     *
+     * @return int|string
      */
     public function schemaName2databaseName($schemaName)
     {
@@ -255,11 +255,11 @@ class Laminator
     }
 
     /**
-     * @return $this
-     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
+     *
+     * @return $this
      */
     public function makeLaminator()
     {
@@ -391,11 +391,11 @@ class Laminator
     /**
      * @param Model[] $models
      *
-     * @return Laminator
-     *
      * @throws LoaderError  When the template cannot be found
      * @throws SyntaxError  When an error occurred during compilation
      * @throws RuntimeError When an error occurred during rendering
+     *
+     * @return Laminator
      */
     private function makeCoreFiles(array $models)
     {
