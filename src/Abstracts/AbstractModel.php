@@ -282,13 +282,12 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         return $this->destroyRecursively();
     }
 
-    protected function getProtectedMethods(): array
-    {
-        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
-    }
-
     abstract public static function find(Finder $finder);
 
     abstract public static function findOne(Finder $finder);
 
+    protected function getProtectedMethods(): array
+    {
+        return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
+    }
 }

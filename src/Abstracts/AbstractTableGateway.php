@@ -611,22 +611,27 @@ abstract class AbstractTableGateway extends TableGateway
         return $row;
     }
 
-    public function getByFinder(Finder $finder){
+    public function getByFinder(Finder $finder)
+    {
         $select = $this->sql->select();
 
         $select->where($finder);
 
-        if($finder->getOrder())
+        if ($finder->getOrder()) {
             $select->order($finder->getOrder());
+        }
 
-        if($finder->getLimit())
+        if ($finder->getLimit()) {
             $select->limit($finder->getLimit());
+        }
 
-        if($finder->getOffset())
+        if ($finder->getOffset()) {
             $select->offset($finder->getOffset());
+        }
 
         return $this->selectWith($select);
     }
+
     /**
      * @param Where                  $where
      * @param null|int               $limit
