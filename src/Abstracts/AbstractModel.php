@@ -2,6 +2,7 @@
 
 namespace Benzine\ORM\Abstracts;
 
+use Benzine\ORM\Finder;
 use Benzine\ORM\Interfaces\ModelInterface;
 use Camel\CaseTransformer;
 use Camel\Format;
@@ -285,4 +286,9 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     {
         return ['getPrimaryKeys', 'getProtectedMethods', 'getDIContainer'];
     }
+
+    abstract public static function find(Finder $finder);
+
+    abstract public static function findOne(Finder $finder);
+
 }

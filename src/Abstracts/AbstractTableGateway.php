@@ -5,6 +5,7 @@ namespace Benzine\ORM\Abstracts;
 use Benzine\Controllers\Filters\FilterCondition;
 use Benzine\Exceptions\BenzineException;
 use Benzine\Exceptions\DbRuntimeException;
+use Benzine\ORM\Finder;
 use Benzine\ORM\Interfaces\ModelInterface;
 use Benzine\ORM\LaminatorSql;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -610,6 +611,22 @@ abstract class AbstractTableGateway extends TableGateway
         return $row;
     }
 
+    public function getByFinder(Finder $finder){
+        $select = $this->sql->select();
+
+        $select->where($finder);
+
+        if($finder->getOrder())
+            $select->order($finder->getOrder());
+
+        if($finder->getLimit())
+            $select->limit($finder->getLimit());
+
+        if($finder->getOffset())
+            $select->offset($finder->getOffset());
+
+        return $this->selectWith($select);
+    }
     /**
      * @param Where                  $where
      * @param null|int               $limit
@@ -707,81 +724,6 @@ abstract class AbstractTableGateway extends TableGateway
         }
 
         return $row;
-    }
-
-    /**
-     * Get single matching object.
-     *
-     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param null                                                     $orderBy
-     * @param string                                                   $orderDirection
-     */
-    public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING)
-    {
-        $select = $this->sql->select();
-        $select->where($keyValue);
-        if ($orderBy) {
-            if ($orderBy instanceof Expression) {
-                $select->order($orderBy);
-            } else {
-                $select->order("{$orderBy} {$orderDirection}");
-            }
-        }
-        $select->limit(1);
-
-        $resultSet = $this->selectWith($select);
-
-        $row = $resultSet->current();
-        if (!$row) {
-            return null;
-        }
-
-        return $row;
-    }
-
-    /**
-     * Get many matching objects.
-     *
-     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param null                                                     $orderBy
-     * @param string                                                   $orderDirection
-     * @param int                                                      $limit
-     *
-     * @return null|array|\ArrayObject
-     */
-    public function getManyMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING, int $limit = null): ?array
-    {
-        $select = $this->sql->select();
-        $select->where($keyValue);
-        if ($orderBy) {
-            if ($orderBy instanceof Expression) {
-                $select->order($orderBy);
-            } else {
-                $select->order("{$orderBy} {$orderDirection}");
-            }
-        }
-        if ($limit) {
-            $select->limit($limit);
-        }
-        $resultSet = $this->selectWith($select);
-
-        $results = [];
-        if (0 == $resultSet->count()) {
-            return null;
-        }
-        for ($i = 0; $i < $resultSet->count(); ++$i) {
-            /** @var AbstractModel $row */
-            $row = $resultSet->current();
-            if ($row->hasPrimaryKey()) {
-                $id = implode('-', $row->getPrimaryKeys());
-                $results[$id] = $row;
-            } else {
-                $results[] = $row;
-            }
-            $resultSet->next();
-        }
-
-        return $results;
     }
 
     public function getNewModelInstance(array $data = []): AbstractModel

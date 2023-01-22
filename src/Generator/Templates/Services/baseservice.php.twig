@@ -9,6 +9,7 @@ use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Where;
+use Benzine\ORM\Finder;
 use Benzine\ORM\Abstracts\AbstractService;
 use Benzine\ORM\Interfaces\ServiceInterface as ServiceInterface;
 
@@ -47,6 +48,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     }
 
     /**
+     * @deprecated Please replace with getByFinder
      * @param null|int               $limit
      * @param null|int               $offset
      * @param null|array|\Closure[]  $wheres
@@ -62,6 +64,9 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         $order = null,
         string $orderDirection = null
     ) : Collections\{{ class_name }}Collection {
+
+        trigger_error("Deprecated function getAll called. please replace with getByFinder.", E_USER_DEPRECATED);
+
         return parent::getAll(
             $limit,
             $offset,
@@ -90,6 +95,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
 {% endfor %}
 
     /**
+     * @deprecated Please use getByFinder instead.
      * @param string $field Table column to filter by
      * @param mixed $value Data to filter by
      * @param null|string $orderBy Field to sort by
@@ -99,12 +105,15 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getByField(string $field, $value, $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Models\{{ class_name }}Model
     {
+        trigger_error("Deprecated function getByField called. please replace with getByFinder.", E_USER_DEPRECATED);
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getByField($field, $value, $orderBy, $orderDirection);
     }
 
     /**
+     * @deprecated Please use getByFinder instead.
      * @param Where $where Laminas Where statement to use
      * @param null|int $limit
      * @param null|int $offset
@@ -120,12 +129,15 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         $orderBy = null,
         $orderDirection = Select::ORDER_ASCENDING
     ): Collections\{{ class_name }}Collection {
+        trigger_error("Deprecated function getManyByWhere called. please replace with getByFinder.", E_USER_DEPRECATED);
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyByWhere($where, $limit, $offset, $orderBy, $orderDirection);
     }
 
     /**
+     * @deprecated Please use getByFinder instead, which is drop-in compatable.
      * @param Where $where Laminas Where statement to use
      *
      * @return null|Models\{{ class_name }}Model
@@ -134,6 +146,7 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         Where $where
     ): ?Models\{{ class_name }}Model
     {
+        trigger_error("Deprecated function getByWhere called. please replace with getByFinder.", E_USER_DEPRECATED);
         ${{ variable_name }} = $this->getManyByWhere($where, 1);
         if (${{ variable_name }}->count() == 0) {
             return null;
@@ -143,14 +156,26 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
     }
 
     /**
+     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
+     */
+    public function getByFinder(Finder $finder)
+        : Collections\{{ class_name }}Collection
+    {
+        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
+
+        return ${{ variable_name}}Table->getByFinder($finder);
+    }
+
+    /**
      * @param string $field Table column to filter by
      * @param mixed $value Data to filter by
+     * @deprecated Please use getByFinder instead.
      * @param null|int $limit
      * @param null|int $offset
      * @param null|string $orderBy Field to sort by
      * @param null|string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
-* @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
+     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
      */
     public function getManyByField(
         string $field,
@@ -160,12 +185,15 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         $orderBy = null,
         $orderDirection = Select::ORDER_ASCENDING
     ) : Collections\{{ class_name }}Collection {
+        trigger_error("Deprecated function getManyByField called. please replace with getByFinder.", E_USER_DEPRECATED);
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->getManyByField($field, $value, $limit, $offset, $orderBy, $orderDirection);
     }
 
     /**
+     * @deprecated Please use countByFinder instead.
      * @param string $field
      * @param mixed $value
      *
@@ -173,18 +201,23 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function countByField(string $field, $value): int
     {
+        trigger_error("Deprecated function countByField called. please replace with countByFinder.", E_USER_DEPRECATED);
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->countByField($field, $value);
     }
 
     /**
+     * @deprecated Please use countByFinder instead (and is drop-in compatable).
      * @param Where $where
      *
      * @return int
      */
     public function countByWhere(Where $where): int
     {
+        trigger_error("Deprecated function countByWhere called. please replace with countByFinder.", E_USER_DEPRECATED);
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->countByWhere($where);
@@ -195,42 +228,13 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
      */
     public function getRandom(): ?Models\{{ class_name }}Model
     {
+        trigger_error("Deprecated function getRandom called. please replace with getByFinder.", E_USER_DEPRECATED);
+
+        //@todo refactor this to internally use getByFinder
+
         ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
 
         return ${{ variable_name }}Table->fetchRandom();
-    }
-
-    /**
-     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param string $orderBy Field to sort by
-     * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     *
-     * @return Models\{{ class_name }}Model
-     */
-    public function getMatching($keyValue = [], $orderBy = null, $orderDirection = Select::ORDER_ASCENDING): ?Models\{{ class_name }}Model
-    {
-        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
-
-        return ${{ variable_name }}Table->getMatching($keyValue, $orderBy, $orderDirection);
-    }
-
-    /**
-     * @param array|\Closure|Predicate\PredicateInterface|string|Where $keyValue
-     * @param string $orderBy Field to sort by
-     * @param string $orderDirection Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     * @param int $limit Limit the number of matches returned
-     *
-     * @return Collections\{{ class_name }}Collection|Models\{{ class_name }}Model[]
-     */
-    public function getManyMatching(
-        $keyValue = [],
-        $orderBy = null,
-        $orderDirection = Select::ORDER_ASCENDING,
-        int $limit = null
-    ) : Collections\{{ class_name }}Collection {
-        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
-
-        return ${{ variable_name }}Table->getManyMatching($keyValue, $orderBy, $orderDirection, $limit);
     }
 
     /**
@@ -244,35 +248,6 @@ abstract class AbstractBase{{ class_name }}Service extends AbstractService imple
         ${{ variable_name }} = $this->getNewModelInstance($dataExchange);
 
         return ${{ variable_name }}Table->save(${{ variable_name }});
-    }
-
-{% for column in columns %}
-{% if column.getFieldSanitised == 'id' %}
-    /**
-     * @param int $id
-     *
-     * @deprecated
-     *
-     * @return int
-     */
-    public function deleteById($id): int
-    {
-        return $this->deleteByField('id', $id);
-    }
-{% endif %}
-{% endfor %}
-
-    /**
-     * @param string $field
-     * @param mixed $value
-     *
-     * @return int
-     */
-    public function deleteByField(string $field, $value): int
-    {
-        ${{ variable_name }}Table = $this->getNewTableGatewayInstance();
-
-        return ${{ variable_name }}Table->delete([$field => $value]);
     }
 
     public function getTermPlural(): string

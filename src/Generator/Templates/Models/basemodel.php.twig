@@ -7,6 +7,7 @@ use {{ namespace }}\Models;
 use {{ namespace }}\TableGateways;
 use {{ namespace }}\Services;
 use DI\NotFoundException;
+use Benzine\ORM\Finder;
 use Benzine\ORM\Abstracts\AbstractModel;
 use Benzine\ORM\Interfaces\ModelInterface as ModelInterface;
 use Benzine\App as App;
@@ -467,4 +468,19 @@ abstract class AbstractBase{{ class_name }}Model extends AbstractModel implement
         return $this;
     }
 
+    /**
+     * @returns Models\{{ class_name }}Model[]
+     */
+    public static function find(Finder $finder)
+    {
+        ${{ variable_name }}Service = App::DI(Services\{{ class_name }}Service::class);
+
+        return ${{ variable_name }}Service->getByFinder($finder);
+    }
+
+    public static function findOne(Finder $finder) : ?Models\{{ class_name }}Model
+    {
+        $result = self::find($finder->limit(1));
+        return $result[0] ?? null;
+    }
 }
