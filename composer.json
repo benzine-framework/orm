@@ -21,7 +21,8 @@
     "robmorgan/phinx": "^0.12.1"
   },
   "require-dev": {
-    "benzine/core": "dev-main"
+    "benzine/core": "dev-main",
+    "benzine/dev-tools": "dev-main"
   },
   "autoload": {
     "psr-4": {
