@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Abstracts;
 
 use Benzine\Controllers\Filters\FilterCondition;
@@ -17,6 +19,7 @@ use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 use Laminas\Db\TableGateway\TableGateway;
+use Laminas\Db\ResultSet\ResultSetInterface;
 
 abstract class AbstractTableGateway extends TableGateway
 {
@@ -26,7 +29,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function __construct($table, AdapterInterface $adapter, $features = null, $resultSetPrototype = null, $sql = null)
     {
         $this->adapter = $adapter;
-        $this->table = $table;
+        $this->table   = $table;
 
         if (!$sql) {
             $sql = new LaminatorSql($this->adapter, $this->table);
@@ -91,9 +94,9 @@ abstract class AbstractTableGateway extends TableGateway
             return $updatedModel;
         } catch (InvalidQueryException $iqe) {
             throw new InvalidQueryException(
-                'While trying to call '.get_class().'->save(): ... '.
-                $iqe->getMessage()."\n\n".
-                substr(var_export($model, true), 0, 1024)."\n\n",
+                'While trying to call ' . get_class() . '->save(): ... ' .
+                $iqe->getMessage() . "\n\n" .
+                substr(var_export($model, true), 0, 1024) . "\n\n",
                 $iqe->getCode(),
                 $iqe
             );
@@ -188,6 +191,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function update($data, $where = null, $oldData = [])
     {
         $data = array_filter($data);
+
         // !\Kint::dump($data, $oldData, $where);exit;
         return parent::update($data, $where);
     }
@@ -204,9 +208,9 @@ abstract class AbstractTableGateway extends TableGateway
      * @return array [ResultSet,int] Returns an array of resultSet,total_found_rows
      */
     public function fetchAll(
-        int $limit = null,
-        int $offset = null,
-        array $wheres = null,
+        ?int $limit = null,
+        ?int $offset = null,
+        ?array $wheres = null,
         $order = null,
         string $direction = Select::ORDER_ASCENDING
     ) {
@@ -326,7 +330,7 @@ abstract class AbstractTableGateway extends TableGateway
      */
     public function fetchDistinct(
         string $distinctColumn,
-        array $wheres = null
+        ?array $wheres = null
     ) {
         /** @var Select $select */
         $select = $this->getSql()->select();
@@ -403,9 +407,9 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @throws BenzineException
-     *
      * @return null|ModelInterface
+     *
+     * @throws BenzineException
      */
     public function fetchRandom()
     {
@@ -489,7 +493,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function getCountUnique(string $field, $wheres = []): int
     {
         $select = $this->getSql()->select();
-        $select->columns(['total' => new Expression('DISTINCT '.$field)]);
+        $select->columns(['total' => new Expression('DISTINCT ' . $field)]);
         if (count($wheres) > 0) {
             foreach ($wheres as $where) {
                 $select->where($where);
@@ -536,7 +540,7 @@ abstract class AbstractTableGateway extends TableGateway
                 ->current()
             ;
 
-            $highestPrimaryKey = !is_null($row) ? $row['max'] : 0;
+            $highestPrimaryKey               = !is_null($row) ? $row['max'] : 0;
             $highestPrimaryKeys[$primaryKey] = $highestPrimaryKey;
         }
 
@@ -558,7 +562,7 @@ abstract class AbstractTableGateway extends TableGateway
                 ->current()
             ;
 
-            $highestAutoIncrementKey = !is_null($row) ? $row['max'] : 0;
+            $highestAutoIncrementKey                     = !is_null($row) ? $row['max'] : 0;
             $highestAutoIncrementKeys[$autoIncrementKey] = $highestAutoIncrementKey;
         }
 
@@ -566,8 +570,6 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param $id
-     *
      * @return null|AbstractModel
      */
     public function getById($id)
@@ -576,9 +578,7 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param $field
-     * @param $value
-     * @param $orderBy string Field to sort by
+     * @param $orderBy        string Field to sort by
      * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @return null|array|\ArrayObject
@@ -633,15 +633,11 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param Where                  $where
-     * @param null|int               $limit
-     * @param null|int               $offset
      * @param null|Expression|string $orderBy
-     * @param string                 $orderDirection
      *
-     * @return \Laminas\Db\ResultSet\ResultSetInterface
+     * @return ResultSetInterface
      */
-    public function getManyByWhere(Where $where, int $limit = null, int $offset = null, $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
+    public function getManyByWhere(Where $where, ?int $limit = null, ?int $offset = null, $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         $select = $this->sql->select();
 
@@ -667,15 +663,14 @@ abstract class AbstractTableGateway extends TableGateway
     }
 
     /**
-     * @param null|int    $limit   int
-     * @param null|int    $offset  int
-     * @param null|string $orderBy string Field to sort by
-     * @param $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
-     * @param mixed $value
+     * @param null|int    $limit          int
+     * @param null|int    $offset         int
+     * @param null|string $orderBy        string Field to sort by
+     * @param             $orderDirection string Direction to sort (Select::ORDER_ASCENDING || Select::ORDER_DESCENDING)
      *
      * @return AbstractCollection
      */
-    public function getManyByField(string $field, $value, int $limit = null, int $offset = null, string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
+    public function getManyByField(string $field, $value, ?int $limit = null, ?int $offset = null, ?string $orderBy = null, string $orderDirection = Select::ORDER_ASCENDING)
     {
         if ($value instanceof \DateTime) {
             $value = $value->format('Y-m-d H:i:s');
@@ -695,7 +690,7 @@ abstract class AbstractTableGateway extends TableGateway
             new Expression('COUNT(*) as count'),
         ]);
         $statement = $this->sql->prepareStatementForSqlObject($select);
-        $result = $statement->execute();
+        $result    = $statement->execute();
 
         $data = $result->current();
 
@@ -744,7 +739,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function getBySelect(Select $select): array
     {
         $resultSet = $this->executeSelect($select);
-        $return = [];
+        $return    = [];
         foreach ($resultSet as $result) {
             $return[] = $result;
         }
@@ -758,7 +753,7 @@ abstract class AbstractTableGateway extends TableGateway
     public function getBySelectRaw(Select $select): array
     {
         $resultSet = $this->executeSelect($select);
-        $return = [];
+        $return    = [];
         while ($result = $resultSet->getDataSource()->current()) {
             $return[] = $result;
             $resultSet->getDataSource()->next();

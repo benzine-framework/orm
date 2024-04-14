@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Connection;
 
 use Benzine\Exceptions\BenzineException;
@@ -20,7 +22,7 @@ class Databases
         Logger $logger
     ) {
         $this->configurationService = $configurationService;
-        $this->logger = $logger;
+        $this->logger               = $logger;
 
         foreach ($this->configurationService->get('databases') as $name => $config) {
             if (!isset(self::$databases[$name])) {

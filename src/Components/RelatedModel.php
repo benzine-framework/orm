@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Components;
 
 use Benzine\ORM\Connection\Database;
@@ -65,7 +67,7 @@ class RelatedModel extends Entity
     public function getRemoteVariable(): string
     {
         return $this->transStudly2Camel->transform(
-            $this->getRemoteClassPrefix().
+            $this->getRemoteClassPrefix() .
             $this->transCamel2Studly->transform($this->getRemoteTableSanitised())
         );
     }
@@ -102,7 +104,7 @@ class RelatedModel extends Entity
     public function getLocalVariable(): string
     {
         return $this->transStudly2Camel->transform(
-            $this->getLocalClassPrefix().
+            $this->getLocalClassPrefix() .
             $this->transCamel2Studly->transform($this->getLocalTableSanitised())
         );
     }
@@ -126,7 +128,7 @@ class RelatedModel extends Entity
 
     public function getLocalBoundColumnAsConstant(): string
     {
-        return 'FIELD_'.str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getLocalBoundColumn()));
+        return 'FIELD_' . str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getLocalBoundColumn()));
     }
 
     public function getLocalTable(): string
@@ -145,7 +147,7 @@ class RelatedModel extends Entity
     {
         return $this->transCamel2Studly->transform(
             $this->getLocalClass()
-            .'TableGateway'
+            . 'TableGateway'
         );
     }
 
@@ -153,7 +155,7 @@ class RelatedModel extends Entity
     {
         return $this->transCamel2Studly->transform(
             $this->getRemoteClass()
-            .'TableGateway'
+            . 'TableGateway'
         );
     }
 
@@ -161,7 +163,7 @@ class RelatedModel extends Entity
     {
         return $this->transCamel2Studly->transform(
             $this->getLocalClass()
-            .'Model'
+            . 'Model'
         );
     }
 
@@ -169,7 +171,7 @@ class RelatedModel extends Entity
     {
         return $this->transCamel2Studly->transform(
             $this->getRemoteClass()
-            .'Model'
+            . 'Model'
         );
     }
 
@@ -177,10 +179,9 @@ class RelatedModel extends Entity
     {
         if ($this->hasClassConflict()) {
             return
-                self::singulariseCamelCaseSentence($this->getLocalClass()).
-                'By'.
-                $this->transCamel2Studly->transform($this->getLocalBoundColumn())
-            ;
+                self::singulariseCamelCaseSentence($this->getLocalClass()) .
+                'By' .
+                $this->transCamel2Studly->transform($this->getLocalBoundColumn());
         }
 
         return $this->transCamel2Studly->transform(
@@ -192,8 +193,8 @@ class RelatedModel extends Entity
     {
         if ($this->hasClassConflict()) {
             return
-                self::singulariseCamelCaseSentence($this->getRemoteClass()).
-                'By'.
+                self::singulariseCamelCaseSentence($this->getRemoteClass()) .
+                'By' .
                 $this->transCamel2Studly->transform($this->getLocalBoundColumn());
         }
 
@@ -210,7 +211,7 @@ class RelatedModel extends Entity
 
     public function getLocalClass(): string
     {
-        return $this->getLocalClassPrefix().
+        return $this->getLocalClassPrefix() .
                 $this->transCamel2Studly->transform($this->getLocalTableSanitised());
     }
 
@@ -233,28 +234,28 @@ class RelatedModel extends Entity
 
     public function getRemoteClass(): string
     {
-        return $this->getRemoteClassPrefix().
+        return $this->getRemoteClassPrefix() .
             $this->transCamel2Studly->transform($this->getRemoteTableSanitised());
     }
 
     public function getLocalBoundColumnGetter(): string
     {
-        return 'get'.$this->transCamel2Studly->transform($this->getLocalBoundColumn());
+        return 'get' . $this->transCamel2Studly->transform($this->getLocalBoundColumn());
     }
 
     public function getRemoteBoundColumnGetter(): string
     {
-        return 'get'.$this->transCamel2Studly->transform($this->getRemoteBoundColumn());
+        return 'get' . $this->transCamel2Studly->transform($this->getRemoteBoundColumn());
     }
 
     public function getLocalBoundColumnSetter(): string
     {
-        return 'set'.$this->transCamel2Studly->transform($this->getLocalBoundColumn());
+        return 'set' . $this->transCamel2Studly->transform($this->getLocalBoundColumn());
     }
 
     public function getRemoteBoundColumnSetter(): string
     {
-        return 'set'.$this->transCamel2Studly->transform($this->getRemoteBoundColumn());
+        return 'set' . $this->transCamel2Studly->transform($this->getRemoteBoundColumn());
     }
 
     public function getRemoteBoundColumn(): string
@@ -269,7 +270,7 @@ class RelatedModel extends Entity
 
     public function getRemoteBoundColumnAsConstant(): string
     {
-        return 'FIELD_'.str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getRemoteBoundColumn()));
+        return 'FIELD_' . str_replace('_', '', $this->transCamel2ScreamingSnake->transform($this->getRemoteBoundColumn()));
     }
 
     public function setRemoteBoundColumn(string $remoteBoundColumn): RelatedModel
@@ -345,7 +346,7 @@ class RelatedModel extends Entity
      */
     private function singulariseCamelCaseSentence(string $camel): string
     {
-        $snake = explode('_', $this->transCamel2Snake->transform($camel));
+        $snake                    = explode('_', $this->transCamel2Snake->transform($camel));
         $snake[count($snake) - 1] = Inflect::singularize($snake[count($snake) - 1]);
 
         return $this->transSnake2Camel->transform(implode('_', $snake));

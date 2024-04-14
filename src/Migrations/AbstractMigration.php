@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Migrations;
 
 abstract class AbstractMigration extends \Phinx\Migration\AbstractMigration
@@ -10,7 +12,7 @@ abstract class AbstractMigration extends \Phinx\Migration\AbstractMigration
     ];
 
     protected array $enumYesNoOptions = [
-        'values' => ['Yes', 'No'],
+        'values'  => ['Yes', 'No'],
         'default' => 'No',
     ];
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM;
 
 use Benzine\ORM\Profiler\Profiler as BenzineProfiler;
@@ -10,7 +12,7 @@ use Laminas\Db\ResultSet;
 
 class Adapter extends LaminasAdapter
 {
-    public function __construct($driver, Platform\PlatformInterface $platform = null, ResultSet\ResultSetInterface $queryResultPrototype = null, Profiler\ProfilerInterface $profiler = null)
+    public function __construct($driver, ?Platform\PlatformInterface $platform = null, ?ResultSet\ResultSetInterface $queryResultPrototype = null, ?Profiler\ProfilerInterface $profiler = null)
     {
         parent::__construct($driver, $platform, $queryResultPrototype, $profiler);
         // if (!defined('ZEND_PROFILER_DISABLE') || ZEND_PROFILER_DISABLE == false) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Components;
 
 use Benzine\Exceptions\BenzineException;
@@ -17,10 +19,10 @@ class Model extends Entity
     protected string $table;
 
     /** @var Column[] */
-    protected array $columns = [];
-    protected array $constraints = [];
+    protected array $columns        = [];
+    protected array $constraints    = [];
     protected array $relatedObjects = [];
-    protected array $primaryKeys = [];
+    protected array $primaryKeys    = [];
     protected $autoIncrements;
 
     /**
@@ -41,9 +43,9 @@ class Model extends Entity
         foreach ($zendConstraints as $zendConstraint) {
             if ('FOREIGN KEY' == $zendConstraint->getType()) {
                 // \Kint::dump($this->getTable(), $this->getClassPrefix(), $zendConstraint->getTableName());
-                $keyMapIdLocal = $zendConstraint->getSchemaName().'::'.$zendConstraint->getTableName();
-                $keyMapIdRemote = $zendConstraint->getReferencedTableSchema().'::'.$zendConstraint->getReferencedTableName();
-                $localRelatedModel = $models[$keyMap[$keyMapIdLocal]];
+                $keyMapIdLocal      = $zendConstraint->getSchemaName() . '::' . $zendConstraint->getTableName();
+                $keyMapIdRemote     = $zendConstraint->getReferencedTableSchema() . '::' . $zendConstraint->getReferencedTableName();
+                $localRelatedModel  = $models[$keyMap[$keyMapIdLocal]];
                 $remoteRelatedModel = $models[$keyMap[$keyMapIdRemote]];
                 // \Kint::dump(array_keys($models), $zendConstraint, $relatedModel);exit;
 
@@ -122,7 +124,7 @@ class Model extends Entity
     {
         if ($this->getClassPrefix()) {
             return
-                $this->getClassPrefix().
+                $this->getClassPrefix() .
                 $this->transStudly2Studly->transform($this->getTableSanitised());
         }
 
@@ -217,7 +219,7 @@ class Model extends Entity
             return $this->columns[$name];
         }
 
-        throw new BenzineException("Cannot find a Column called {$name} in ".implode(', ', array_keys($this->getColumns())));
+        throw new BenzineException("Cannot find a Column called {$name} in " . implode(', ', array_keys($this->getColumns())));
     }
 
     public function hasColumn(string $columName): bool
@@ -258,8 +260,8 @@ class Model extends Entity
 
         foreach ($columns as $column) {
             /** @var ColumnObject $column */
-            $typeFragments = explode(' ', $column->getDataType());
-            $dbColumnName = $column->getName();
+            $typeFragments  = explode(' ', $column->getDataType());
+            $dbColumnName   = $column->getName();
             $codeColumnName = $this->sanitiseColumnName($column->getName());
 
             $oColumn = Column::Factory($this->getLaminator())
@@ -281,7 +283,7 @@ class Model extends Entity
 
                 case 'Postgresql':
                     if ('USER-DEFINED' == $column->getDataType()) {
-                        $enumName = explode('::', $column->getColumnDefault(), 2)[1];
+                        $enumName        = explode('::', $column->getColumnDefault(), 2)[1];
                         $permittedValues = [];
                         foreach ($this->getDatabase()->getAdaptor()->query("SELECT unnest(enum_range(NULL::{$enumName})) AS option")->execute() as $aiColumn) {
                             $permittedValues[] = $aiColumn['option'];
@@ -343,26 +345,26 @@ class Model extends Entity
     {
         return [
             'namespace' => $this->getNamespace(),
-            'database' => $this->getDatabase()->getName(),
-            'table' => $this->getTable(),
-            'app_name' => $this->getLaminator()->getBenzineConfig()->getAppName(),
-            'app_core' => $this->getLaminator()->getBenzineConfig()->getCore(),
+            'database'  => $this->getDatabase()->getName(),
+            'table'     => $this->getTable(),
+            'app_name'  => $this->getLaminator()->getBenzineConfig()->getAppName(),
+            'app_core'  => $this->getLaminator()->getBenzineConfig()->getCore(),
             // 'app_container' => $this->getLaminator()->getBenzineConfig()->getAppContainer(),
-            'class_name' => $this->getClassName(),
-            'endpoint_name' => $this->getEndpointName(),
-            'variable_name' => $this->transStudly2Camel->transform($this->getClassName()),
-            'name' => $this->getClassName(),
-            'object_name_plural' => Inflect::pluralize($this->getClassName()),
-            'object_name_singular' => $this->getClassName(),
-            'controller_route' => $this->transCamel2Snake->transform(Inflect::pluralize($this->getClassName())),
-            'namespace_model' => "{$this->getNamespace()}\\Models\\{$this->getClassName()}Model",
-            'columns' => $this->columns,
-            'related_objects' => $this->getRelatedObjects(),
+            'class_name'             => $this->getClassName(),
+            'endpoint_name'          => $this->getEndpointName(),
+            'variable_name'          => $this->transStudly2Camel->transform($this->getClassName()),
+            'name'                   => $this->getClassName(),
+            'object_name_plural'     => Inflect::pluralize($this->getClassName()),
+            'object_name_singular'   => $this->getClassName(),
+            'controller_route'       => $this->transCamel2Snake->transform(Inflect::pluralize($this->getClassName())),
+            'namespace_model'        => "{$this->getNamespace()}\\Models\\{$this->getClassName()}Model",
+            'columns'                => $this->columns,
+            'related_objects'        => $this->getRelatedObjects(),
             'related_objects_shared' => $this->getRelatedObjectsSharedAssets(),
-            'remote_objects' => $this->getRemoteObjects(),
-            'primary_keys' => $this->getPrimaryKeys(),
-            'primary_parameters' => $this->getPrimaryParameters(),
-            'autoincrement_keys' => $this->getAutoIncrements(),
+            'remote_objects'         => $this->getRemoteObjects(),
+            'primary_keys'           => $this->getPrimaryKeys(),
+            'primary_parameters'     => $this->getPrimaryParameters(),
+            'autoincrement_keys'     => $this->getAutoIncrements(),
             // @todo: work out why there are two.
             'autoincrement_parameters' => $this->getAutoIncrements(),
         ];
@@ -407,6 +409,7 @@ class Model extends Entity
         foreach ($this->getRelatedObjects() as $relatedObject) {
             $sharedAssets[$relatedObject->getRemoteClass()] = $relatedObject;
         }
+
         // if(count($this->getRelatedObjects())) {
         //    \Kint::dump($this->getRelatedObjects(), $sharedAssets);
         //    exit;
@@ -514,7 +517,7 @@ class Model extends Entity
             }
         }
         if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/transform")) {
-            $transform = Laminator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
+            $transform  = Laminator::BenzineConfig()->get("benzine/databases/{$database}/column_options/_/transform");
             $columnName = $this->getLaminator()->{$transform}->transform($columnName);
         }
         if (Laminator::BenzineConfig()->has("benzine/databases/{$database}/column_options/_/replace")) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\TabularData;
 
 use Benzine\ORM\Abstracts\AbstractService;
@@ -10,16 +12,16 @@ class Table
     protected AbstractService $service;
     protected array $data;
     protected string $name;
-    protected int $page = 0;
+    protected int $page    = 0;
     protected int $perPage = 25;
 
     protected array $colums = [];
-    protected array $rows = [];
+    protected array $rows   = [];
 
     public function __construct(AbstractService $service)
     {
         $this->service = $service;
-        $this->setName(get_class($service));
+        $this->setName($service::class);
         $this->reload();
     }
 

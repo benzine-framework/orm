@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Migrations;
 
 use Benzine\ORM\Tests\App;
@@ -14,6 +16,6 @@ abstract class AbstractSeed extends \Phinx\Seed\AbstractSeed
     public function __construct()
     {
         $this->faker = App::Instance()->get(Generator::class);
-        $this->log = App::Instance()->get(Logger::class);
+        $this->log   = App::Instance()->get(Logger::class);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Connection;
 
 use Benzine\ORM\Tests\App;
@@ -16,7 +18,7 @@ class Database
     private string $username;
     private string $password;
     private string $database;
-    private string $charset = 'utf8mb4';
+    private string $charset      = 'utf8mb4';
     private array $ignoredTables = [];
 
     /** @var callable[] */
@@ -26,8 +28,8 @@ class Database
 
     public function __construct(
         private Logger $logger,
-        string $name = null,
-        array $config = null
+        ?string $name = null,
+        ?array $config = null
     ) {
         if ($name) {
             $this->setName($name);
@@ -163,19 +165,11 @@ class Database
         return new Metadata($this->getAdapter());
     }
 
-    /**
-     * @return array
-     */
     public function getIgnoredTables(): array
     {
         return $this->ignoredTables;
     }
 
-    /**
-     * @param array $ignoredTables
-     *
-     * @return Database
-     */
     public function setIgnoredTables(array $ignoredTables): Database
     {
         $this->ignoredTables = $ignoredTables;
@@ -186,14 +180,14 @@ class Database
     public function getArray(): array
     {
         return [
-            'driver' => 'pdo',
+            'driver'    => 'pdo',
             'pdodriver' => $this->getType(),
-            'type' => $this->getType(),
-            'charset' => $this->getCharset(),
-            'host' => $this->getHostname(),
-            'username' => $this->getUsername(),
-            'password' => $this->getPassword(),
-            'database' => $this->getDatabase(),
+            'type'      => $this->getType(),
+            'charset'   => $this->getCharset(),
+            'host'      => $this->getHostname(),
+            'username'  => $this->getUsername(),
+            'password'  => $this->getPassword(),
+            'database'  => $this->getDatabase(),
         ];
     }
 

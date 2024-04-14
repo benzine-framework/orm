@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Abstracts;
 
 use Benzine\ORM\Finder;
@@ -9,7 +11,7 @@ use Camel\Format;
 
 abstract class AbstractModel implements ModelInterface, \Serializable
 {
-    protected array $_primary_keys = [];
+    protected array $_primary_keys       = [];
     protected array $_autoincrement_keys = [];
 
     protected array $_original;
@@ -26,9 +28,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
      * Overrideable __setUp function that will allow you to hijack
      * it and create any related objects that need to be recreated.
      */
-    public function __setUp(): void
-    {
-    }
+    public function __setUp(): void {}
 
     public function __wakeup(): void
     {
@@ -45,8 +45,8 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         $transformer = new CaseTransformer(new Format\StudlyCaps(), new Format\StudlyCaps());
 
         foreach ($this->getListOfProperties() as $property) {
-            $getFunction = "get{$property}";
-            $currentValue = $this->{$getFunction}();
+            $getFunction                               = "get{$property}";
+            $currentValue                              = $this->{$getFunction}();
             $array[$transformer->transform($property)] = $currentValue;
         }
 
@@ -146,7 +146,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     {
         $primaryKeyValues = [];
         foreach ($this->_primary_keys as $internalName => $dbName) {
-            $getFunction = "get{$internalName}";
+            $getFunction                     = "get{$internalName}";
             $primaryKeyValues[$internalName] = $this->{$getFunction}();
         }
 
@@ -157,7 +157,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     {
         $primaryKeyValues = [];
         foreach ($this->_primary_keys as $internalName => $dbName) {
-            $getFunction = "get{$internalName}";
+            $getFunction               = "get{$internalName}";
             $primaryKeyValues[$dbName] = $this->{$getFunction}();
         }
 
@@ -173,7 +173,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
     {
         $autoIncrementKeyValues = [];
         foreach ($this->_autoincrement_keys as $autoincrement_key => $autoincrement_db_column) {
-            $getFunction = "get{$autoincrement_key}";
+            $getFunction                                = "get{$autoincrement_key}";
             $autoIncrementKeyValues[$autoincrement_key] = $this->{$getFunction}();
         }
 
@@ -209,7 +209,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
      */
     public function getListOfDirtyProperties(): array
     {
-        $transformer = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
+        $transformer     = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
         $dirtyProperties = [];
         foreach ($this->getListOfProperties() as $property) {
             $originalProperty = $transformer->transform($property);
@@ -217,7 +217,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
             if (!isset($this->_original[$originalProperty]) || $this->{$property} != $this->_original[$originalProperty]) {
                 $dirtyProperties[$property] = [
                     'before' => $this->_original[$originalProperty] ?? null,
-                    'after' => $this->{$property},
+                    'after'  => $this->{$property},
                 ];
             }
         }
@@ -265,7 +265,7 @@ abstract class AbstractModel implements ModelInterface, \Serializable
         if (method_exists($this, 'getName')) {
             return $this->getName();
         }
-        $labelParts = [];
+        $labelParts       = [];
         $primaryKeyFields = array_keys($this->getPrimaryKeys());
         foreach ($primaryKeyFields as $primaryKeyField) {
             $labelParts[] = $this->__get($primaryKeyField);

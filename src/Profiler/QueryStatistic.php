@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Profiler;
 
 use Benzine\ORM\Interfaces\QueryStatisticInterface;
@@ -13,7 +15,7 @@ class QueryStatistic implements QueryStatisticInterface
     public function __toArray(): array
     {
         return [
-            'Time' => number_format($this->getTime() * 1000, 3).'ms',
+            'Time'  => number_format($this->getTime() * 1000, 3) . 'ms',
             'Query' => $this->getSql(),
         ];
     }

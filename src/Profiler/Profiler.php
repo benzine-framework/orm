@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Profiler;
 
 use Benzine\ORM\Interfaces\QueryStatisticInterface;
@@ -12,19 +14,17 @@ class Profiler implements ProfilerInterface
 {
     private ?float $timer;
     private ?string $sql;
-    private array $queries = [];
+    private array $queries    = [];
     private array $queryTimes = [];
 
-    public function __construct(private Logger $logger)
-    {
-    }
+    public function __construct(private Logger $logger) {}
 
-    public function getQueryStats(QueryStatisticInterface $queryStatisticClass = null): array
+    public function getQueryStats(?QueryStatisticInterface $queryStatisticClass = null): array
     {
         return [
             'TotalQueries' => count($this->queryTimes),
-            'TotalTime' => array_sum($this->queryTimes),
-            'Diagnostic' => $this->getQueries($queryStatisticClass),
+            'TotalTime'    => array_sum($this->queryTimes),
+            'Diagnostic'   => $this->getQueries($queryStatisticClass),
         ];
     }
 
@@ -47,25 +47,25 @@ class Profiler implements ProfilerInterface
 
     public function profilerFinish(): void
     {
-        $uuid = UUID::v4();
+        $uuid          = UUID::v4();
         $executionTime = microtime(true) - $this->timer;
         // $this->logger->addDebug("Query \"{$this->sql}\" took {$executionTime} sec");
         $this->queryTimes[$uuid] = $executionTime;
-        $this->queries[$uuid] = [$this->sql, debug_backtrace()];
-        $this->sql = null;
-        $this->timer = null;
+        $this->queries[$uuid]    = [$this->sql, debug_backtrace()];
+        $this->sql               = null;
+        $this->timer             = null;
     }
 
     /**
      * @return QueryStatisticInterface[]
      */
-    public function getQueries(QueryStatisticInterface $queryStatisticClass = null): array
+    public function getQueries(?QueryStatisticInterface $queryStatisticClass = null): array
     {
         $stats = [];
         foreach ($this->queries as $uuid => [$query, $backTrace]) {
             if ($queryStatisticClass) {
                 if (is_object($queryStatisticClass)) {
-                    $queryStatisticClass = get_class($queryStatisticClass);
+                    $queryStatisticClass = $queryStatisticClass::class;
                 }
                 $stat = new $queryStatisticClass();
             } else {

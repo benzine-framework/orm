@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM;
 
 use Benzine\ORM\Exception\BenzineOrmException;
+use Laminas\Db\Sql\Where;
 
-class Finder extends \Laminas\Db\Sql\Where
+class Finder extends Where
 {
     public function __construct(
         ?array $predicates = null,
@@ -65,11 +68,6 @@ class Finder extends \Laminas\Db\Sql\Where
         return $this;
     }
 
-    /**
-     * @param string $orderDirection
-     *
-     * @return Finder
-     */
     public function orderDirection(string $orderDirection): Finder
     {
         if (!in_array($orderDirection, ['desc', 'asc'], true)) {

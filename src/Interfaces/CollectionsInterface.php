@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Interfaces;
 
 use Laminas\Db\ResultSet\ResultSet;

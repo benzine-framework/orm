@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\TabularData;
 
 use Benzine\ORM\Abstracts\AbstractModel;
@@ -22,7 +24,7 @@ class TableRow
                 $service = $options['service'];
 
                 /** @var AbstractModel $relatedEntity */
-                $relatedEntity = $service->getByField($field, $this->data[$field]);
+                $relatedEntity         = $service->getByField($field, $this->data[$field]);
                 $this->related[$field] = $relatedEntity;
             }
         }

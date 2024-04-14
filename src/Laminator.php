@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM;
 
 use Benzine\App;
@@ -23,6 +25,10 @@ use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader as TwigFileSystemLoader;
+use Twig\Environment;
+use Twig\Extension\DebugExtension;
+use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class Laminator
 {
@@ -35,11 +41,11 @@ class Laminator
     public CaseTransformer $transCamel2Snake;
     private string $workPath;
     private static ConfigurationService $benzineConfig;
-    private array  $config = [
-        'templates' => [],
+    private array $config = [
+        'templates'  => [],
         'formatting' => [],
-        'sql' => [],
-        'clean' => [],
+        'sql'        => [],
+        'clean'      => [],
     ];
     private static bool $useClassPrefixes = false;
     private TwigFileSystemLoader $loader;
@@ -49,20 +55,20 @@ class Laminator
     private bool $waitForKeypressEnabled = true;
 
     private array $defaultEnvironment = [];
-    private array $defaultHeaders = [];
+    private array $defaultHeaders     = [];
     private int $expectedFileOwner;
     private int $expectedFileGroup;
     private int $expectedPermissions;
 
     public function __construct(string $workPath, ConfigurationService $benzineConfig, Databases $databases)
     {
-        $this->workPath = $workPath;
+        $this->workPath      = $workPath;
         self::$benzineConfig = $benzineConfig;
-        $this->databases = $databases;
+        $this->databases     = $databases;
 
-        $script = realpath($_SERVER['SCRIPT_FILENAME']);
-        $this->expectedFileOwner = fileowner($script);
-        $this->expectedFileGroup = filegroup($script);
+        $script                    = realpath($_SERVER['SCRIPT_FILENAME']);
+        $this->expectedFileOwner   = fileowner($script);
+        $this->expectedFileGroup   = filegroup($script);
         $this->expectedPermissions = fileperms($script);
 
         set_exception_handler([$this, 'exceptionHandler']);
@@ -70,7 +76,7 @@ class Laminator
 
         $this->defaultEnvironment = [
             'SCRIPT_NAME' => '/index.php',
-            'RAND' => rand(0, 100000000),
+            'RAND'        => random_int(0, 100000000),
         ];
         $this->defaultHeaders = [];
     }
@@ -88,9 +94,9 @@ class Laminator
             $this->setWorkPath(self::$benzineConfig->get(ConfigurationService::KEY_APP_ROOT));
         }
 
-        $this->loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/Generator/Templates');
-        $this->twig = new \Twig\Environment($this->loader, ['debug' => true]);
-        $this->twig->addExtension(new \Twig\Extension\DebugExtension());
+        $this->loader = new FilesystemLoader(__DIR__ . '/Generator/Templates');
+        $this->twig   = new Environment($this->loader, ['debug' => true]);
+        $this->twig->addExtension(new DebugExtension());
         $this->twig->addExtension(new TransformExtension());
         $this->twig->addExtension(new InflectionExtension());
 
@@ -98,16 +104,16 @@ class Laminator
             new ArrayUniqueTwigExtension()
         );
 
-        $fct = new \Twig\TwigFunction('var_export', 'var_export');
+        $fct = new TwigFunction('var_export', 'var_export');
         $this->twig->addFunction($fct);
 
-        $this->transSnake2Studly = new CaseTransformer(new Format\SnakeCase(), new Format\StudlyCaps());
-        $this->transStudly2Camel = new CaseTransformer(new Format\StudlyCaps(), new Format\CamelCase());
+        $this->transSnake2Studly  = new CaseTransformer(new Format\SnakeCase(), new Format\StudlyCaps());
+        $this->transStudly2Camel  = new CaseTransformer(new Format\StudlyCaps(), new Format\CamelCase());
         $this->transStudly2Studly = new CaseTransformer(new Format\StudlyCaps(), new Format\StudlyCaps());
-        $this->transCamel2Studly = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
-        $this->transSnake2Camel = new CaseTransformer(new Format\SnakeCase(), new Format\CamelCase());
-        $this->transSnake2Spinal = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
-        $this->transCamel2Snake = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
+        $this->transCamel2Studly  = new CaseTransformer(new Format\CamelCase(), new Format\StudlyCaps());
+        $this->transSnake2Camel   = new CaseTransformer(new Format\SnakeCase(), new Format\CamelCase());
+        $this->transSnake2Spinal  = new CaseTransformer(new Format\SnakeCase(), new Format\SpinalCase());
+        $this->transCamel2Snake   = new CaseTransformer(new Format\CamelCase(), new Format\SnakeCase());
 
         return $this;
     }
@@ -138,12 +144,12 @@ class Laminator
     {
         // UHOH exception handler
         /** @var \Exception $exception */
-        echo "\n".ConsoleHelper::COLOR_RED;
+        echo "\n" . ConsoleHelper::COLOR_RED;
         echo " ____ ____ ____ ____ \n";
         echo "||U |||H |||O |||H ||\n";
         echo "||__|||__|||__|||__||\n";
         echo "|/__\\|/__\\|/__\\|/__\\|\n";
-        echo ConsoleHelper::COLOR_RESET."\n\n";
+        echo ConsoleHelper::COLOR_RESET . "\n\n";
         echo $exception->getMessage();
         echo "\n\n";
         echo "In {$exception->getFile()}:{$exception->getLine()}";
@@ -171,11 +177,9 @@ class Laminator
     }
 
     /**
-     * @param $schemaName
+     * @return int|string
      *
      * @throws SchemaToAdaptorException
-     *
-     * @return int|string
      */
     public function schemaName2databaseName($schemaName)
     {
@@ -228,8 +232,8 @@ class Laminator
     {
         switch ($database->getAdapter()->getDriver()->getDatabasePlatformName()) {
             case 'Mysql':
-                $sql = "SHOW columns FROM `{$table}` WHERE extra LIKE '%auto_increment%'";
-                $query = $database->getAdapter()->query($sql);
+                $sql     = "SHOW columns FROM `{$table}` WHERE extra LIKE '%auto_increment%'";
+                $query   = $database->getAdapter()->query($sql);
                 $columns = [];
 
                 foreach ($query->execute() as $aiColumn) {
@@ -239,8 +243,8 @@ class Laminator
                 return $columns;
 
             case 'Postgresql':
-                $sql = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}' AND column_default LIKE 'nextval(%'";
-                $query = $database->getAdapter()->query($sql);
+                $sql     = "SELECT column_name FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}' AND column_default LIKE 'nextval(%'";
+                $query   = $database->getAdapter()->query($sql);
                 $columns = [];
 
                 foreach ($query->execute() as $aiColumn) {
@@ -255,11 +259,11 @@ class Laminator
     }
 
     /**
+     * @return $this
+     *
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
-     *
-     * @return $this
      */
     public function makeLaminator()
     {
@@ -280,7 +284,7 @@ class Laminator
     {
         /** @var Model[] $models */
         $models = [];
-        $keys = [];
+        $keys   = [];
         foreach ($this->databases->getAll() as $dbName => $database) {
             /** @var Database $database */
             echo "Database: {$dbName}\n";
@@ -288,13 +292,13 @@ class Laminator
             /** @var TableObject $tables */
             $tables = $database->getMetadata()->getTables();
 
-            echo 'Collecting '.count($tables)." entities data.\n";
+            echo 'Collecting ' . count($tables) . " entities data.\n";
 
             foreach ($tables as $table) {
                 if (in_array($table->getName(), $database->getIgnoredTables(), true)) {
                     continue;
                 }
-                $oModel = Components\Model::Factory($this)
+                $oModel = Model::Factory($this)
                     ->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix", null))
                     ->setNamespace(self::$benzineConfig->getNamespace())
                     ->setDatabase($database)
@@ -304,8 +308,8 @@ class Laminator
                 if (self::$benzineConfig->has("databases/{$dbName}/class_prefix")) {
                     $oModel->setClassPrefix(self::$benzineConfig->get("databases/{$dbName}/class_prefix"));
                 }
-                $models[$oModel->getClassName()] = $oModel;
-                $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()] = $oModel->getClassName();
+                $models[$oModel->getClassName()]                                              = $oModel;
+                $keys[$database->getAdapter()->getCurrentSchema() . '::' . $table->getName()] = $oModel->getClassName();
             }
         }
         ksort($models);
@@ -317,7 +321,7 @@ class Laminator
                 if (in_array($table->getName(), $database->getIgnoredTables(), true)) {
                     continue;
                 }
-                $key = $keys[$database->getAdapter()->getCurrentSchema().'::'.$table->getName()];
+                $key = $keys[$database->getAdapter()->getCurrentSchema() . '::' . $table->getName()];
                 $models[$key]
                     ->computeColumns($table->getColumns())
                     ->computeConstraints($models, $keys, $table->getConstraints())
@@ -391,15 +395,15 @@ class Laminator
     /**
      * @param Model[] $models
      *
+     * @return Laminator
+     *
      * @throws LoaderError  When the template cannot be found
      * @throws SyntaxError  When an error occurred during compilation
      * @throws RuntimeError When an error occurred during rendering
-     *
-     * @return Laminator
      */
     private function makeCoreFiles(array $models)
     {
-        echo 'Generating Core files for '.count($models)." models... \n";
+        echo 'Generating Core files for ' . count($models) . " models... \n";
         $allModelData = [];
         foreach ($models as $model) {
             $allModelData[$model->getClassName()] = $model->getRenderDataset();
@@ -447,10 +451,10 @@ class Laminator
     private function renderToFile(bool $overwrite, string $path, string $template, array $data)
     {
         $output = $this->twig->render($template, $data);
-        $path = $this->getWorkPath().'/'.$path;
+        $path   = $this->getWorkPath() . '/' . $path;
 
         if (!(new Filesystem())->exists(dirname($path))) {
-            (new Filesystem())->mkdir(dirname($path), 0777);
+            (new Filesystem())->mkdir(dirname($path), 0o777);
         }
         if (!(new Filesystem())->exists($path) || $overwrite) {
             // printf(" [Done]" . PHP_EOL);

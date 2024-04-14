@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Components;
 
 use Benzine\ORM\Exception\DBTypeNotTranslatedException;
@@ -23,8 +25,8 @@ class Column extends Entity
     protected $permittedValues;
     protected $defaultValue;
     protected $defaultValueIsLiteral = false;
-    protected $isAutoIncrement = false;
-    protected $isUnique = false;
+    protected $isAutoIncrement       = false;
+    protected $isUnique              = false;
 
     /** @var RelatedModel[] */
     protected $relatedObjects = [];
@@ -97,8 +99,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $phpType
-     *
      * @return Column
      */
     public function setPhpType($phpType)
@@ -124,8 +124,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $field
-     *
      * @return Column
      */
     public function setField($field)
@@ -154,8 +152,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $dbField
-     *
      * @return Column
      */
     public function setDbField($dbField)
@@ -176,8 +172,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $maxDecimalPlaces
-     *
      * @return Column
      */
     public function setMaxDecimalPlaces($maxDecimalPlaces)
@@ -193,8 +187,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $defaultValue
-     *
      * @return Column
      */
     public function setDefaultValue($defaultValue)
@@ -233,8 +225,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $maxLength
-     *
      * @return Column
      */
     public function setMaxLength($maxLength)
@@ -250,8 +240,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $maxFieldLength
-     *
      * @return Column
      */
     public function setMaxFieldLength($maxFieldLength)
@@ -267,11 +255,9 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $dbType
+     * @return Column
      *
      * @throws DBTypeNotTranslatedException
-     *
-     * @return Column
      */
     public function setDbType($dbType)
     {
@@ -325,7 +311,7 @@ class Column extends Entity
 
             case 'timestamp':   // MySQL
             case 'datetime':    // MySQL
-                $this->setPhpType('\\'.DateTime::class);
+                $this->setPhpType('\\' . DateTime::class);
 
                 break;
 
@@ -342,8 +328,6 @@ class Column extends Entity
     }
 
     /**
-     * @param mixed $permittedValues
-     *
      * @return Column
      */
     public function setPermittedValues($permittedValues)

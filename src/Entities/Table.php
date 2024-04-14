@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Benzine\ORM\Entities;
 
 class Table extends AbstractEntity
@@ -13,8 +15,6 @@ class Table extends AbstractEntity
     }
 
     /**
-     * @param mixed $tableName
-     *
      * @return Table
      */
     public function setTableName($tableName)
