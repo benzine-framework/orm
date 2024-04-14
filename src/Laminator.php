@@ -20,14 +20,14 @@ use Camel\Format;
 use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Stdlib\ConsoleHelper;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
-use Twig\Loader\FilesystemLoader as TwigFileSystemLoader;
-use Twig\Environment;
 use Twig\Extension\DebugExtension;
 use Twig\Loader\FilesystemLoader;
+use Twig\Loader\FilesystemLoader as TwigFileSystemLoader;
 use Twig\TwigFunction;
 
 class Laminator

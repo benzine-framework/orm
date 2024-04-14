@@ -13,13 +13,13 @@ use Benzine\ORM\LaminatorSql;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\ResultSet\ResultSet;
+use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate;
 use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Where;
 use Laminas\Db\TableGateway\TableGateway;
-use Laminas\Db\ResultSet\ResultSetInterface;
 
 abstract class AbstractTableGateway extends TableGateway
 {
