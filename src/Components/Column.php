@@ -197,7 +197,7 @@ class Column extends Entity
             $this->setDefaultValueIsLiteral(true);
         } elseif (is_numeric($defaultValue)) {
             $this->setDefaultValueIsLiteral(true);
-        } elseif (false !== stripos($defaultValue, '()')) {
+        } elseif ($defaultValue != null && false !== stripos($defaultValue, '()')) {
             $this->setDefaultValueIsLiteral(false);
         } else {
             $this->setDefaultValueIsLiteral(true);
