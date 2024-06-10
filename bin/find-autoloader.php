@@ -14,6 +14,10 @@ function detectAndLoadVendor($path = __DIR__): void
             define('VENDOR_PATH', $fileInfo->getRealPath());
 
             require_once VENDOR_PATH . '/autoload.php';
+            if(!defined('APP_ROOT')) {
+                define('APP_ROOT', VENDOR_PATH . "/../");
+            }
+
 
             return;
         }
