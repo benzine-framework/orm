@@ -22,7 +22,7 @@ class Database
     private array $ignoredTables = [];
 
     /** @var callable[] */
-    private array $onConnect;
+    private array $onConnect = [];
 
     private ?Adapter $adapter = null;
 
